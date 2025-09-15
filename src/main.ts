@@ -1,11 +1,11 @@
-import express from 'express';
+import express, { type Express } from 'express';
 import cors from 'cors';
 import environment from './configs/environment.ts';
 
-const app = express();
+const app: Express = express();
 
 app.use(cors());
 
-app.listen(environment.PORT, () => {
+app.listen(environment.PORT, async () => {
   console.log('Process listening on port ' + environment.PORT);
 });

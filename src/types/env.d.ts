@@ -2,7 +2,7 @@ declare global {
   namespace NodeJS {
     interface ProcessEnv {
       PORT: number;
-      API_WORKING_DAYS: string;
+      API_CAPTA_HOLYDATES: string;
     }
   }
 }
