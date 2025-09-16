@@ -1,6 +1,11 @@
 import axios, { type AxiosInstance } from 'axios';
 import env from '../configs/environment.ts';
 
+/**
+ * Axios base instance for http requests
+ *
+ * @type {AxiosInstance}
+ */
 const httpClient: AxiosInstance = axios.create({
   timeout: 1000,
   headers: {
@@ -15,10 +20,12 @@ const httpClient: AxiosInstance = axios.create({
  * @async
  * @returns {Promise<any>}
  */
-export async function getHolidays(): Promise<any> {
+export async function getHolidays(): Promise<{ dates: string }> {
   try {
     const _response = await httpClient.get(env.API_CAPTA_HOLYDATES);
-    return _response.data;
+    if (!_response) throw new Error('Error: Invalid api call');
+
+    return { dates: _response.data };
   } catch (error: any) {
     return error;
   }
