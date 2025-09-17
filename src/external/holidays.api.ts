@@ -20,12 +20,12 @@ const httpClient: AxiosInstance = axios.create({
  * @async
  * @returns {Promise<any>}
  */
-export async function getHolidays(): Promise<{ dates: string }> {
+export async function getHolidays(): Promise<{ data: string }> {
   try {
     const _response = await httpClient.get(env.API_CAPTA_HOLYDATES);
     if (!_response) throw new Error('Error: Invalid api call');
 
-    return { dates: _response.data };
+    return { data: _response.data };
   } catch (error: any) {
     return error;
   }

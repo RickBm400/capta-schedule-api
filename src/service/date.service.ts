@@ -1,3 +1,5 @@
+import { getHolidays } from '../external/holidays.api.ts';
+
 export class DateService {
   public _days: number;
   public _hours: number;
@@ -8,6 +10,10 @@ export class DateService {
     this._days = props?.days || 0;
     this._hours = props?.hours || 0;
     this._date = props?.date || new Date();
+  }
+
+  private daysToWorkingHours(days: number): number {
+    return days * 9;
   }
 
   public addDays(days: number) {
