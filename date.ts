@@ -1,13 +1,5 @@
 import moment, { Moment } from 'moment-timezone';
 
-const _date = moment('2025-09-13T12:30:00').tz('America/Bogota');
-// console.log(_date.format());
-
-const [dayOfWeek, currentTime] = _date.format('E,HH:mm:ss').split(',');
-const dayOfWeekParse = parseInt(dayOfWeek);
-// console.log(dayOfWeekParse);
-// console.log(currentTime);
-
 const weekendDays = [6, 7];
 
 const timeToSeconds = (horaStr: string): number => {
@@ -33,29 +25,6 @@ const restWorkingHours = {
   checkinMs: timeToSeconds('08:00:00'),
   midNight: timeToSeconds('23:59:59'),
 };
-
-// FIRST VALIDATIONS
-if (weekendDays.includes(dayOfWeekParse)) {
-  addToDate(_date, 8 - dayOfWeekParse, 'days');
-  setToDate(_date, { hour: 8, minute: 0, second: 0 });
-  //   console.log(_date.format());
-}
-
-// SECOND VALIDATION
-let hc = 2;
-const currentTimeMs = timeToSeconds(currentTime);
-if (
-  currentTimeMs > restWorkingHours.startLunchMs &&
-  currentTimeMs < restWorkingHours.endLunchMs
-) {
-  hc++;
-}
-
-if (currentTimeMs > restWorkingHours.checkoutMs) {
-  // resetWorkingDayHours(_date) pasa el objeto date para setear la hora 8:00AM
-  // Increment 1 days
-  // Increment date hours + 1
-}
 
 // TESTING BLOCK
 console.clear();
@@ -85,14 +54,14 @@ function testThisCode(
     .format('E:HH:mm:ss')
     .split(':')
     .map(Number);
-
+  const initialHour = hour;
   let _hoursCounter = hoursCounter + daysCounter * 9;
-  let _hcFlag = _hoursCounter;
-  let _daysCounter = Math.trunc(_hoursCounter / 9);
+  let _isEqualOneDay = _hoursCounter % 9 == 0;
+  let _daysCounter = Math.trunc(_hoursCounter / 9) + 1;
   // console.log('days counter', _daysCounter);
 
   while (_hoursCounter > 0) {
-    console.log('counter: ', _hoursCounter);
+    // console.log('counter: ', _hoursCounter);
     [dayInWeek, hour, minute, second] = _dateTest
       .format('E:HH:mm:ss')
       .split(':')
@@ -104,7 +73,7 @@ function testThisCode(
       let daysToAdd = firsRound ? 5 - dayInWeek : 8 - dayInWeek;
       addToDate(_dateTest, daysToAdd, 'days');
       setToDate(_dateTest, { hour: firsRound ? 17 : 8, minute: 0, second: 0 });
-      console.log('check weekend output: ', _dateTest.format());
+      // console.log('check weekend output: ', _dateTest.format());
       firsRound && (firsRound = false);
       continue;
     }
@@ -116,9 +85,9 @@ function testThisCode(
     ) {
       addToDate(_dateTest, 1, 'hours');
       firsRound && setToDate(_dateTest, { minute: 0, second: 0 });
-      console.log('check midday output: ', _dateTest.format());
+      // console.log('check midday output: ', _dateTest.format());
       firsRound && (firsRound = false);
-      if (_hcFlag == 9) {
+      if (_isEqualOneDay) {
         _hoursCounter--;
       }
       continue;
@@ -126,29 +95,40 @@ function testThisCode(
 
     // Check Leaving hours
     if (
-      currentTimeMs > restWorkingHours.checkoutMs &&
+      currentTimeMs >= restWorkingHours.checkoutMs &&
       currentTimeMs <= restWorkingHours.midNight
     ) {
       addToDate(_dateTest, 1, 'days');
-      setToDate(_dateTest, { hour: firsRound ? 17 : 8 });
+      setToDate(_dateTest, {
+        hour: firsRound && currentTimeMs > restWorkingHours.checkoutMs ? 17 : 8,
+      });
       !firsRound && setToDate(_dateTest, { minute: 0, second: 0 });
-      console.log('check gte chout lte mdn output: ', _dateTest.format());
+      // console.log('check gte chout lte mdn output: ', _dateTest.format());
       firsRound && (firsRound = false);
-      continue;
-    }
-
-    if (currentTimeMs == restWorkingHours.checkoutMs) {
-      addToDate(_dateTest, 1, 'days');
-      setToDate(_dateTest, { hour: firsRound ? 17 : 8 });
-      !firsRound && setToDate(_dateTest, { minute: 0, second: 0 });
-      // !firsRound && _hoursCounter--;
-      firsRound && (firsRound = false);
-      console.log('check gte chout lte checkout hour: ', _dateTest.format());
+      if (!(firsRound && currentTimeMs > restWorkingHours.checkoutMs))
+        _daysCounter--;
       continue;
     }
 
     addToDate(_dateTest, 1, 'hours');
-    console.log('check default case: ', _dateTest.format());
+    // +1 18 _hoursCounter++ Solo cuando la hora inicial es 8 y las horas contador 9
+    if (
+      initialHour == 8 &&
+      _daysCounter > 0 &&
+      _hoursCounter == 1 &&
+      _isEqualOneDay
+    ) {
+      addToDate(_dateTest, 1, 'hours');
+      _hoursCounter++;
+      _daysCounter--;
+      // console.log('borderCase');
+      // console.log('daysCounter, ', _daysCounter);
+    }
+    if (initialHour == 8 && _daysCounter <= 0 && _isEqualOneDay) {
+      setToDate(_dateTest, { hour: 8, minute: 0, second: 0 });
+      _hoursCounter = 0;
+    }
+    // console.log('check default case: ', _dateTest.format());
     firsRound && (firsRound = false);
     _hoursCounter--;
   }
@@ -160,10 +140,8 @@ function testThisCode(
 testThisCode(moment('2025-09-12T17:00:00').tz('America/Bogota'), 1);
 testThisCode(moment('2025-09-13T14:00:00').tz('America/Bogota'), 1);
 testThisCode(moment('2025-09-16T15:00:00').tz('America/Bogota'), 3, 1);
-testThisCode(moment('2025-09-14T18:00:00').tz('America/Bogota'), 0, 1); // 1 día
+testThisCode(moment('2025-09-14T18:00:00').tz('America/Bogota'), 0, 1); // 1 día 4
 testThisCode(moment('2025-09-15T08:00:00').tz('America/Bogota'), 8); // 8 horas
-testThisCode(moment('2025-09-15T08:00:00').tz('America/Bogota'), 0, 1); // 1 día
-testThisCode(moment('2025-09-15T12:30:00').tz('America/Bogota'), 0, 1);
+testThisCode(moment('2025-09-15T08:00:00').tz('America/Bogota'), 0, 1); // 1 día 6
+testThisCode(moment('2025-09-15T12:30:00').tz('America/Bogota'), 0, 1); // 7
 testThisCode(moment('2025-09-15T11:30:00').tz('America/Bogota'), 3);
-
-// console.log([hour, minute, second].join(', '));
