@@ -63,73 +63,94 @@ console.clear();
 console.log('midnight ', restWorkingHours.midNight);
 console.log('checkout ', restWorkingHours.checkoutMs);
 console.log('checkin ', restWorkingHours.checkinMs);
+let counterExample = 0;
 
-function testThisCode(_dateTest: Moment, hoursCounter: number) {
-  let firsRound = true;
+function testThisCode(
+  _dateTest: Moment,
+  hoursCounter: number = 0,
+  daysCounter: number = 0
+) {
+  console.log('EJEMPLO NO: ', (counterExample = counterExample + 1));
   console.log(
     '\nOriginal Date: ',
     _dateTest.format(),
     '\nHours: ',
     hoursCounter,
+    '\nDays: ',
+    daysCounter,
     '\n'
   );
+  let firsRound = true;
   let [dayInWeek, hour, minute, second] = _dateTest
     .format('E:HH:mm:ss')
     .split(':')
     .map(Number);
 
-  while (hoursCounter > 0) {
-    console.log('counter: ', hoursCounter);
+  let _hoursCounter = hoursCounter + daysCounter * 9;
+  let _hcFlag = _hoursCounter;
+  let _daysCounter = Math.trunc(_hoursCounter / 9);
+  // console.log('days counter', _daysCounter);
+
+  while (_hoursCounter > 0) {
+    console.log('counter: ', _hoursCounter);
+    [dayInWeek, hour, minute, second] = _dateTest
+      .format('E:HH:mm:ss')
+      .split(':')
+      .map(Number);
+    const currentTimeMs = timeToSeconds([hour, minute, second].join(':'));
+
+    // Check Weekends
     if (weekendDays.includes(dayInWeek)) {
-      addToDate(_dateTest, 8 - dayInWeek, 'days');
-      setToDate(_dateTest, { hour: 8, minute: 0, second: 0 });
-      [dayInWeek, hour, minute, second] = _dateTest
-        .format('E:HH:mm:ss')
-        .split(':')
-        .map(Number);
+      let daysToAdd = firsRound ? 5 - dayInWeek : 8 - dayInWeek;
+      addToDate(_dateTest, daysToAdd, 'days');
+      setToDate(_dateTest, { hour: firsRound ? 17 : 8, minute: 0, second: 0 });
       console.log('check weekend output: ', _dateTest.format());
+      firsRound && (firsRound = false);
       continue;
     }
 
-    const currentTimeMs = timeToSeconds([hour, minute, second].join(':'));
-
+    // Check Midday Lunch
     if (
       currentTimeMs > restWorkingHours.startLunchMs &&
       currentTimeMs < restWorkingHours.endLunchMs
     ) {
       addToDate(_dateTest, 1, 'hours');
       firsRound && setToDate(_dateTest, { minute: 0, second: 0 });
-      [dayInWeek, hour, minute, second] = _dateTest
-        .format('E:HH:mm:ss')
-        .split(':')
-        .map(Number);
       console.log('check midday output: ', _dateTest.format());
+      firsRound && (firsRound = false);
+      if (_hcFlag == 9) {
+        _hoursCounter--;
+      }
       continue;
     }
 
+    // Check Leaving hours
     if (
-      currentTimeMs >= restWorkingHours.checkoutMs &&
+      currentTimeMs > restWorkingHours.checkoutMs &&
       currentTimeMs <= restWorkingHours.midNight
     ) {
       addToDate(_dateTest, 1, 'days');
-      setToDate(_dateTest, { hour: 8 });
-      firsRound && setToDate(_dateTest, { minute: 0, second: 0 });
-      [dayInWeek, hour, minute, second] = _dateTest
-        .format('E:HH:mm:ss')
-        .split(':')
-        .map(Number);
+      setToDate(_dateTest, { hour: firsRound ? 17 : 8 });
+      !firsRound && setToDate(_dateTest, { minute: 0, second: 0 });
       console.log('check gte chout lte mdn output: ', _dateTest.format());
+      firsRound && (firsRound = false);
+      continue;
+    }
+
+    if (currentTimeMs == restWorkingHours.checkoutMs) {
+      addToDate(_dateTest, 1, 'days');
+      setToDate(_dateTest, { hour: firsRound ? 17 : 8 });
+      !firsRound && setToDate(_dateTest, { minute: 0, second: 0 });
+      // !firsRound && _hoursCounter--;
+      firsRound && (firsRound = false);
+      console.log('check gte chout lte checkout hour: ', _dateTest.format());
       continue;
     }
 
     addToDate(_dateTest, 1, 'hours');
-    [dayInWeek, hour, minute, second] = _dateTest
-      .format('E:HH:mm:ss')
-      .split(':')
-      .map(Number);
     console.log('check default case: ', _dateTest.format());
-    firsRound = false;
-    hoursCounter--;
+    firsRound && (firsRound = false);
+    _hoursCounter--;
   }
 
   console.log('\ncheck output case: ', _dateTest.format());
@@ -138,9 +159,11 @@ function testThisCode(_dateTest: Moment, hoursCounter: number) {
 
 testThisCode(moment('2025-09-12T17:00:00').tz('America/Bogota'), 1);
 testThisCode(moment('2025-09-13T14:00:00').tz('America/Bogota'), 1);
-testThisCode(moment('2025-09-16T15:00:00').tz('America/Bogota'), 12);
-testThisCode(moment('2025-09-14T18:00:00').tz('America/Bogota'), 9);
-testThisCode(moment('2025-09-15T08:00:00').tz('America/Bogota'), 8);
-testThisCode(moment('2025-09-15T08:00:00').tz('America/Bogota'), 9);
+testThisCode(moment('2025-09-16T15:00:00').tz('America/Bogota'), 3, 1);
+testThisCode(moment('2025-09-14T18:00:00').tz('America/Bogota'), 0, 1); // 1 día
+testThisCode(moment('2025-09-15T08:00:00').tz('America/Bogota'), 8); // 8 horas
+testThisCode(moment('2025-09-15T08:00:00').tz('America/Bogota'), 0, 1); // 1 día
+testThisCode(moment('2025-09-15T12:30:00').tz('America/Bogota'), 0, 1);
+testThisCode(moment('2025-09-15T11:30:00').tz('America/Bogota'), 3);
 
 // console.log([hour, minute, second].join(', '));
