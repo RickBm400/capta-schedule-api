@@ -1,10 +1,10 @@
 import moment, { Moment } from 'moment-timezone';
 
-const weekendDays = [6, 7];
+const weekendDayNumbers = [6, 7];
 
-const timeToSeconds = (horaStr: string): number => {
-  const [hh, mm, ss] = horaStr.split(':').map(Number);
-  return hh * 3600 + mm * 60 + ss;
+const timeToSeconds = (timeString: string): number => {
+  const [hours, minutes, seconds] = timeString.split(':').map(Number);
+  return hours * 3600 + minutes * 60 + seconds;
 };
 
 const setToDate = (
@@ -14,11 +14,11 @@ const setToDate = (
 
 const addToDate = (
   date: Moment,
-  digit: number = 0,
-  type: 'hours' | 'days' | 'minutes' = 'days'
-): Moment => date.add(digit, type);
+  amount: number = 0,
+  unit: 'hours' | 'days' | 'minutes' = 'days'
+): Moment => date.add(amount, unit);
 
-const restWorkingHours = {
+const workingHoursInSeconds = {
   startLunchMs: timeToSeconds('11:59:59'),
   endLunchMs: timeToSeconds('13:00:00'),
   checkoutMs: timeToSeconds('17:00:00'),
@@ -28,120 +28,149 @@ const restWorkingHours = {
 
 // TESTING BLOCK
 console.clear();
+console.log('midnight ', workingHoursInSeconds.midNight);
+console.log('checkout ', workingHoursInSeconds.checkoutMs);
+console.log('checkin ', workingHoursInSeconds.checkinMs);
 
-console.log('midnight ', restWorkingHours.midNight);
-console.log('checkout ', restWorkingHours.checkoutMs);
-console.log('checkin ', restWorkingHours.checkinMs);
-let counterExample = 0;
+let testExampleCounter = 0;
 
-function testThisCode(
-  _dateTest: Moment,
-  hoursCounter: number = 0,
-  daysCounter: number = 0
+function getFormattedDate(
+  inputDate: Moment,
+  hoursToAdd: number = 0,
+  daysToAdd: number = 0
 ) {
-  console.log('EJEMPLO NO: ', (counterExample = counterExample + 1));
+  console.log('EJEMPLO NO: ', (testExampleCounter = testExampleCounter + 1));
   console.log(
     '\nOriginal Date: ',
-    _dateTest.format(),
+    inputDate.format(),
     '\nHours: ',
-    hoursCounter,
+    hoursToAdd,
     '\nDays: ',
-    daysCounter,
+    daysToAdd,
     '\n'
   );
-  let firsRound = true;
-  let [dayInWeek, hour, minute, second] = _dateTest
+
+  let isFirstIteration = true;
+  let [currentDayOfWeek, currentHour, currentMinute, currentSecond] = inputDate
     .format('E:HH:mm:ss')
     .split(':')
     .map(Number);
-  const initialHour = hour;
-  let _hoursCounter = hoursCounter + daysCounter * 9;
-  let _isEqualOneDay = _hoursCounter % 9 == 0;
-  let _daysCounter = Math.trunc(_hoursCounter / 9) + 1;
-  // console.log('days counter', _daysCounter);
 
-  while (_hoursCounter > 0) {
-    // console.log('counter: ', _hoursCounter);
-    [dayInWeek, hour, minute, second] = _dateTest
+  const startingHour = currentHour;
+  let totalHoursToProcess = hoursToAdd + daysToAdd * 9;
+  let isExactlyOneDayWorthOfHours = totalHoursToProcess % 9 == 0;
+  let calculatedDaysCounter = Math.trunc(totalHoursToProcess / 9) + 1;
+
+  while (totalHoursToProcess > 0) {
+    console.log('counter: ', totalHoursToProcess);
+    [currentDayOfWeek, currentHour, currentMinute, currentSecond] = inputDate
       .format('E:HH:mm:ss')
       .split(':')
       .map(Number);
-    const currentTimeMs = timeToSeconds([hour, minute, second].join(':'));
+
+    const currentTimeInSeconds = timeToSeconds(
+      [currentHour, currentMinute, currentSecond].join(':')
+    );
 
     // Check Weekends
-    if (weekendDays.includes(dayInWeek)) {
-      let daysToAdd = firsRound ? 5 - dayInWeek : 8 - dayInWeek;
-      addToDate(_dateTest, daysToAdd, 'days');
-      setToDate(_dateTest, { hour: firsRound ? 17 : 8, minute: 0, second: 0 });
-      // console.log('check weekend output: ', _dateTest.format());
-      firsRound && (firsRound = false);
+    if (weekendDayNumbers.includes(currentDayOfWeek)) {
+      let daysToSkipToWorkday = isFirstIteration
+        ? 5 - currentDayOfWeek
+        : 8 - currentDayOfWeek;
+      addToDate(inputDate, daysToSkipToWorkday, 'days');
+      setToDate(inputDate, {
+        hour: isFirstIteration ? 17 : 8,
+        minute: 0,
+        second: 0,
+      });
+      console.log('check weekend output: ', inputDate.format());
+      isFirstIteration && (isFirstIteration = false);
       continue;
     }
 
     // Check Midday Lunch
     if (
-      currentTimeMs > restWorkingHours.startLunchMs &&
-      currentTimeMs < restWorkingHours.endLunchMs
+      currentTimeInSeconds > workingHoursInSeconds.startLunchMs &&
+      currentTimeInSeconds < workingHoursInSeconds.endLunchMs
     ) {
-      addToDate(_dateTest, 1, 'hours');
-      firsRound && setToDate(_dateTest, { minute: 0, second: 0 });
-      // console.log('check midday output: ', _dateTest.format());
-      firsRound && (firsRound = false);
-      if (_isEqualOneDay) {
-        _hoursCounter--;
+      addToDate(inputDate, 1, 'hours');
+      isFirstIteration && setToDate(inputDate, { minute: 0, second: 0 });
+      console.log('check midday output: ', inputDate.format());
+      isFirstIteration && (isFirstIteration = false);
+      if (isExactlyOneDayWorthOfHours) {
+        totalHoursToProcess--;
       }
       continue;
     }
 
     // Check Leaving hours
     if (
-      currentTimeMs >= restWorkingHours.checkoutMs &&
-      currentTimeMs <= restWorkingHours.midNight
+      (currentTimeInSeconds >= workingHoursInSeconds.checkoutMs &&
+        currentTimeInSeconds <= workingHoursInSeconds.midNight) ||
+      (currentTimeInSeconds > workingHoursInSeconds.midNight &&
+        currentTimeInSeconds < workingHoursInSeconds.checkinMs)
     ) {
-      addToDate(_dateTest, 1, 'days');
-      setToDate(_dateTest, {
-        hour: firsRound && currentTimeMs > restWorkingHours.checkoutMs ? 17 : 8,
+      addToDate(inputDate, 1, 'days');
+      setToDate(inputDate, {
+        hour:
+          isFirstIteration &&
+          currentTimeInSeconds > workingHoursInSeconds.checkoutMs
+            ? 17
+            : 8,
       });
-      !firsRound && setToDate(_dateTest, { minute: 0, second: 0 });
-      // console.log('check gte chout lte mdn output: ', _dateTest.format());
-      firsRound && (firsRound = false);
-      if (!(firsRound && currentTimeMs > restWorkingHours.checkoutMs))
-        _daysCounter--;
+      !isFirstIteration && setToDate(inputDate, { minute: 0, second: 0 });
+      console.log('check gte chout lte mdn output: ', inputDate.format());
+      isFirstIteration && (isFirstIteration = false);
+      if (
+        !(
+          isFirstIteration &&
+          currentTimeInSeconds > workingHoursInSeconds.checkoutMs
+        )
+      )
+        calculatedDaysCounter--;
       continue;
     }
 
-    addToDate(_dateTest, 1, 'hours');
-    // +1 18 _hoursCounter++ Solo cuando la hora inicial es 8 y las horas contador 9
+    addToDate(inputDate, 1, 'hours');
+
+    // Border case: +1 hour when initial hour is 8 and ounter is 9
     if (
-      initialHour == 8 &&
-      _daysCounter > 0 &&
-      _hoursCounter == 1 &&
-      _isEqualOneDay
+      startingHour == 8 &&
+      calculatedDaysCounter > 0 &&
+      totalHoursToProcess == 1 &&
+      isExactlyOneDayWorthOfHours
     ) {
-      addToDate(_dateTest, 1, 'hours');
-      _hoursCounter++;
-      _daysCounter--;
-      // console.log('borderCase');
-      // console.log('daysCounter, ', _daysCounter);
+      addToDate(inputDate, 1, 'hours');
+      totalHoursToProcess++;
+      calculatedDaysCounter--;
+      console.log('borderCase');
+      console.log('daysCounter, ', calculatedDaysCounter);
     }
-    if (initialHour == 8 && _daysCounter <= 0 && _isEqualOneDay) {
-      setToDate(_dateTest, { hour: 8, minute: 0, second: 0 });
-      _hoursCounter = 0;
+
+    if (
+      startingHour == 8 &&
+      calculatedDaysCounter <= 0 &&
+      isExactlyOneDayWorthOfHours
+    ) {
+      setToDate(inputDate, { hour: 8, minute: 0, second: 0 });
+      totalHoursToProcess = 0;
     }
-    // console.log('check default case: ', _dateTest.format());
-    firsRound && (firsRound = false);
-    _hoursCounter--;
+
+    console.log('check default case: ', inputDate.format());
+    isFirstIteration && (isFirstIteration = false);
+    totalHoursToProcess--;
+    console.log('counter end ->', totalHoursToProcess);
   }
 
-  console.log('\ncheck output case: ', _dateTest.format());
+  console.log('\ncheck output case: ', inputDate.format());
   console.log('--------------------------------------------------\n');
 }
 
-testThisCode(moment('2025-09-12T17:00:00').tz('America/Bogota'), 1);
-testThisCode(moment('2025-09-13T14:00:00').tz('America/Bogota'), 1);
-testThisCode(moment('2025-09-16T15:00:00').tz('America/Bogota'), 3, 1);
-testThisCode(moment('2025-09-14T18:00:00').tz('America/Bogota'), 0, 1); // 1 día 4
-testThisCode(moment('2025-09-15T08:00:00').tz('America/Bogota'), 8); // 8 horas
-testThisCode(moment('2025-09-15T08:00:00').tz('America/Bogota'), 0, 1); // 1 día 6
-testThisCode(moment('2025-09-15T12:30:00').tz('America/Bogota'), 0, 1); // 7
-testThisCode(moment('2025-09-15T11:30:00').tz('America/Bogota'), 3);
+getFormattedDate(moment('2025-09-12T17:00:00').tz('America/Bogota'), 1);
+getFormattedDate(moment('2025-09-13T14:00:00').tz('America/Bogota'), 1);
+getFormattedDate(moment('2025-09-16T15:00:00').tz('America/Bogota'), 3, 1);
+getFormattedDate(moment('2025-09-14T18:00:00').tz('America/Bogota'), 0, 1); // 1 día 4
+getFormattedDate(moment('2025-09-15T08:00:00').tz('America/Bogota'), 8); // 8 horas
+getFormattedDate(moment('2025-09-15T08:00:00').tz('America/Bogota'), 0, 1); // 1 día 6
+getFormattedDate(moment('2025-09-15T12:30:00').tz('America/Bogota'), 0, 1); // 7
+getFormattedDate(moment('2025-09-15T11:30:00').tz('America/Bogota'), 3);
