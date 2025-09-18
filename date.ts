@@ -57,6 +57,7 @@ function getFormattedDate(
     .map(Number);
 
   const startingHour = currentHour;
+  const startingDayOfWeek = currentDayOfWeek;
   let totalHoursToProcess = hoursToAdd + daysToAdd * 9;
   let isExactlyOneDayWorthOfHours = totalHoursToProcess % 9 == 0;
   let calculatedDaysCounter = Math.trunc(totalHoursToProcess / 9) + 1;
@@ -136,7 +137,8 @@ function getFormattedDate(
     // Border case: +1 hour when initial hour is 8 and ounter is 9
     if (
       startingHour == 8 &&
-      calculatedDaysCounter > 0 &&
+      !weekendDayNumbers.includes(startingDayOfWeek) &&
+      calculatedDaysCounter >= 1 &&
       totalHoursToProcess == 1 &&
       isExactlyOneDayWorthOfHours
     ) {
@@ -149,6 +151,7 @@ function getFormattedDate(
 
     if (
       startingHour == 8 &&
+      !weekendDayNumbers.includes(startingDayOfWeek) &&
       calculatedDaysCounter <= 0 &&
       isExactlyOneDayWorthOfHours
     ) {
@@ -166,11 +169,11 @@ function getFormattedDate(
   console.log('--------------------------------------------------\n');
 }
 
-getFormattedDate(moment('2025-09-12T17:00:00').tz('America/Bogota'), 1);
-getFormattedDate(moment('2025-09-13T14:00:00').tz('America/Bogota'), 1);
-getFormattedDate(moment('2025-09-16T15:00:00').tz('America/Bogota'), 3, 1);
-getFormattedDate(moment('2025-09-14T18:00:00').tz('America/Bogota'), 0, 1); // 1 día 4
-getFormattedDate(moment('2025-09-15T08:00:00').tz('America/Bogota'), 8); // 8 horas
+// getFormattedDate(moment('2025-09-12T17:00:00').tz('America/Bogota'), 1);
+// getFormattedDate(moment('2025-09-13T14:00:00').tz('America/Bogota'), 1);
+// getFormattedDate(moment('2025-09-16T15:00:00').tz('America/Bogota'), 3, 1);
+// getFormattedDate(moment('2025-09-14T18:00:00').tz('America/Bogota'), 0, 1); // 1 día 4
+// getFormattedDate(moment('2025-09-15T08:00:00').tz('America/Bogota'), 8); // 8 horas
 getFormattedDate(moment('2025-09-15T08:00:00').tz('America/Bogota'), 0, 1); // 1 día 6
-getFormattedDate(moment('2025-09-15T12:30:00').tz('America/Bogota'), 0, 1); // 7
-getFormattedDate(moment('2025-09-15T11:30:00').tz('America/Bogota'), 3);
+// getFormattedDate(moment('2025-09-15T12:30:00').tz('America/Bogota'), 0, 1); // 7
+// getFormattedDate(moment('2025-09-15T11:30:00').tz('America/Bogota'), 3);
