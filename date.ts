@@ -19,7 +19,7 @@ const addToDate = (
 ): Moment => date.add(amount, unit);
 
 const workingHoursInSeconds = {
-    startLunchMs: timeToSeconds("11:59:59"),
+    startLunchMs: timeToSeconds("12:00:00"),
     endLunchMs: timeToSeconds("13:00:00"),
     checkoutMs: timeToSeconds("17:00:00"),
     checkinMs: timeToSeconds("08:00:00"),
@@ -58,13 +58,10 @@ function getFormattedDate(
         currentSecond,
     ]: number[] = inputDate.format("E:HH:mm:ss").split(":").map(Number);
 
-    const startingHour: number = currentHour;
-    const startingDayOfWeek: number = currentDayOfWeek;
-    let totalHoursToProcess: number = hoursToAdd + daysToAdd * 9;
-    let isExactlyOneDayWorthOfHours: Boolean = totalHoursToProcess % 9 == 0;
-    let calculatedDaysCounter: number = Math.trunc(totalHoursToProcess / 9) + 1;
+    let totalHoursToProcess: number = hoursToAdd;
+    let totalDaysToProcess: number = daysToAdd;
 
-    while (totalHoursToProcess > 0) {
+    while (totalHoursToProcess > 0 || totalDaysToProcess > 0) {
         console.log("counter: ", totalHoursToProcess);
         [currentDayOfWeek, currentHour, currentMinute, currentSecond] =
             inputDate.format("E:HH:mm:ss").split(":").map(Number);
@@ -75,6 +72,7 @@ function getFormattedDate(
 
         // Check Weekends
         if (weekendDayNumbers.includes(currentDayOfWeek)) {
+            // Aproxima al día laboral más cercano
             let daysToSkipToWorkday = isFirstIteration
                 ? 5 - currentDayOfWeek
                 : 8 - currentDayOfWeek;
@@ -84,32 +82,37 @@ function getFormattedDate(
                 minute: 0,
                 second: 0,
             });
-            console.log("check weekend output: ", inputDate.format());
             isFirstIteration && (isFirstIteration = false);
+            console.log("check weekend output: ", inputDate.format());
             continue;
         }
 
         // Check Midday Lunch
         if (
-            currentTimeInSeconds > workingHoursInSeconds.startLunchMs &&
+            currentTimeInSeconds >= workingHoursInSeconds.startLunchMs &&
             currentTimeInSeconds < workingHoursInSeconds.endLunchMs
         ) {
-            addToDate(inputDate, 1, "hours");
-            isFirstIteration && setToDate(inputDate, { minute: 0, second: 0 });
-            console.log("check midday output: ", inputDate.format());
-            isFirstIteration && (isFirstIteration = false);
-            if (isExactlyOneDayWorthOfHours) {
-                totalHoursToProcess--;
+            if (isFirstIteration) {
+                setToDate(inputDate, { minute: 0, second: 0 });
+                isFirstIteration = false;
+            } else {
+                if (totalDaysToProcess > 0) {
+                    addToDate(inputDate, 1, "days");
+                    totalDaysToProcess--;
+                }
+                addToDate(inputDate, 1, "hours");
             }
+            console.log("check midday output: ", inputDate.format());
             continue;
         }
 
         // Check Leaving hours
         if (
-            (currentTimeInSeconds >= workingHoursInSeconds.checkoutMs &&
+            totalDaysToProcess <= 0 &&
+            ((currentTimeInSeconds >= workingHoursInSeconds.checkoutMs &&
                 currentTimeInSeconds <= workingHoursInSeconds.midNight) ||
-            (currentTimeInSeconds > workingHoursInSeconds.midNight &&
-                currentTimeInSeconds < workingHoursInSeconds.checkinMs)
+                (currentTimeInSeconds > workingHoursInSeconds.midNight &&
+                    currentTimeInSeconds < workingHoursInSeconds.checkinMs))
         ) {
             addToDate(inputDate, 1, "days");
             setToDate(inputDate, {
@@ -122,46 +125,26 @@ function getFormattedDate(
             !isFirstIteration && setToDate(inputDate, { minute: 0, second: 0 });
             console.log("check gte chout lte mdn output: ", inputDate.format());
             isFirstIteration && (isFirstIteration = false);
-            if (
-                !(
-                    isFirstIteration &&
-                    currentTimeInSeconds > workingHoursInSeconds.checkoutMs
-                )
-            )
-                calculatedDaysCounter--;
             continue;
         }
 
-        addToDate(inputDate, 1, "hours");
+        if (totalDaysToProcess > 0) {
+            let daysToAdd = 1;
+            if (weekendDayNumbers.includes(currentDayOfWeek + 1)) {
+                daysToAdd = 8 - currentDayOfWeek;
+            }
+            addToDate(inputDate, daysToAdd, "days");
+            totalDaysToProcess--;
+            continue;
+        }
 
-        // Border case: +1 hour when initial hour is 8 and ounter is 9
-        if (
-            startingHour == 8 &&
-            !weekendDayNumbers.includes(startingDayOfWeek) &&
-            calculatedDaysCounter >= 1 &&
-            totalHoursToProcess == 1 &&
-            isExactlyOneDayWorthOfHours
-        ) {
+        if (totalHoursToProcess > 0) {
             addToDate(inputDate, 1, "hours");
-            totalHoursToProcess++;
-            calculatedDaysCounter--;
-            console.log("borderCase");
-            console.log("daysCounter, ", calculatedDaysCounter);
+            totalHoursToProcess--;
         }
 
-        if (
-            startingHour == 8 &&
-            !weekendDayNumbers.includes(startingDayOfWeek) &&
-            calculatedDaysCounter <= 0 &&
-            isExactlyOneDayWorthOfHours
-        ) {
-            setToDate(inputDate, { hour: 8, minute: 0, second: 0 });
-            totalHoursToProcess = 0;
-        }
-
-        console.log("check default case: ", inputDate.format());
         isFirstIteration && (isFirstIteration = false);
-        totalHoursToProcess--;
+        console.log("check default case: ", inputDate.format());
         console.log("counter end ->", totalHoursToProcess);
     }
 
@@ -171,7 +154,7 @@ function getFormattedDate(
 
 getFormattedDate(moment("2025-09-12T17:00:00").tz("America/Bogota"), 1);
 getFormattedDate(moment("2025-09-13T14:00:00").tz("America/Bogota"), 1);
-getFormattedDate(moment("2025-09-16T15:00:00").tz("America/Bogota"), 3, 1);
+getFormattedDate(moment("2025-09-16T15:00:00").tz("America/Bogota"), 4, 1);
 getFormattedDate(moment("2025-09-14T18:00:00").tz("America/Bogota"), 0, 1); // 1 día 4
 getFormattedDate(moment("2025-09-15T08:00:00").tz("America/Bogota"), 8); // 8 horas
 getFormattedDate(moment("2025-09-15T08:00:00").tz("America/Bogota"), 0, 1); // 1 día 6
