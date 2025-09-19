@@ -11,13 +11,6 @@ Original Date:  2025-09-12T17:00:00-05:00
 Hours:  1 
 Days:  0 
 
-counter:  1
-check gte chout lte mdn output:  2025-09-13T08:00:00-05:00
-counter:  1
-check weekend output:  2025-09-15T08:00:00-05:00
-counter:  1
-check default case:  2025-09-15T09:00:00-05:00
-counter end -> 0
 
 check output case:  2025-09-15T09:00:00-05:00
 --------------------------------------------------
@@ -28,15 +21,6 @@ Original Date:  2025-09-13T14:00:00-05:00
 Hours:  1 
 Days:  0 
 
-counter:  1
-check weekend output:  2025-09-12T17:00:00-05:00
-counter:  1
-check gte chout lte mdn output:  2025-09-13T08:00:00-05:00
-counter:  1
-check weekend output:  2025-09-15T08:00:00-05:00
-counter:  1
-check default case:  2025-09-15T09:00:00-05:00
-counter end -> 0
 
 check output case:  2025-09-15T09:00:00-05:00
 --------------------------------------------------
@@ -44,51 +28,9 @@ check output case:  2025-09-15T09:00:00-05:00
 EJEMPLO NO:  3
 
 Original Date:  2025-09-16T15:00:00-05:00 
-Hours:  3 
+Hours:  4 
 Days:  1 
 
-counter:  12
-check default case:  2025-09-16T16:00:00-05:00
-counter end -> 11
-counter:  11
-check default case:  2025-09-16T17:00:00-05:00
-counter end -> 10
-counter:  10
-check gte chout lte mdn output:  2025-09-17T08:00:00-05:00
-counter:  10
-check default case:  2025-09-17T09:00:00-05:00
-counter end -> 9
-counter:  9
-check default case:  2025-09-17T10:00:00-05:00
-counter end -> 8
-counter:  8
-check default case:  2025-09-17T11:00:00-05:00
-counter end -> 7
-counter:  7
-check default case:  2025-09-17T12:00:00-05:00
-counter end -> 6
-counter:  6
-check midday output:  2025-09-17T13:00:00-05:00
-counter:  6
-check default case:  2025-09-17T14:00:00-05:00
-counter end -> 5
-counter:  5
-check default case:  2025-09-17T15:00:00-05:00
-counter end -> 4
-counter:  4
-check default case:  2025-09-17T16:00:00-05:00
-counter end -> 3
-counter:  3
-check default case:  2025-09-17T17:00:00-05:00
-counter end -> 2
-counter:  2
-check gte chout lte mdn output:  2025-09-18T08:00:00-05:00
-counter:  2
-check default case:  2025-09-18T09:00:00-05:00
-counter end -> 1
-counter:  1
-check default case:  2025-09-18T10:00:00-05:00
-counter end -> 0
 
 check output case:  2025-09-18T10:00:00-05:00
 --------------------------------------------------
@@ -99,38 +41,6 @@ Original Date:  2025-09-14T18:00:00-05:00
 Hours:  0 
 Days:  1 
 
-counter:  9
-check weekend output:  2025-09-12T17:00:00-05:00
-counter:  9
-check gte chout lte mdn output:  2025-09-13T08:00:00-05:00
-counter:  9
-check weekend output:  2025-09-15T08:00:00-05:00
-counter:  9
-check default case:  2025-09-15T09:00:00-05:00
-counter end -> 8
-counter:  8
-check default case:  2025-09-15T10:00:00-05:00
-counter end -> 7
-counter:  7
-check default case:  2025-09-15T11:00:00-05:00
-counter end -> 6
-counter:  6
-check default case:  2025-09-15T12:00:00-05:00
-counter end -> 5
-counter:  5
-check midday output:  2025-09-15T13:00:00-05:00
-counter:  4
-check default case:  2025-09-15T14:00:00-05:00
-counter end -> 3
-counter:  3
-check default case:  2025-09-15T15:00:00-05:00
-counter end -> 2
-counter:  2
-check default case:  2025-09-15T16:00:00-05:00
-counter end -> 1
-counter:  1
-check default case:  2025-09-15T17:00:00-05:00
-counter end -> 0
 
 check output case:  2025-09-15T17:00:00-05:00
 --------------------------------------------------
@@ -141,32 +51,6 @@ Original Date:  2025-09-15T08:00:00-05:00
 Hours:  8 
 Days:  0 
 
-counter:  8
-check default case:  2025-09-15T09:00:00-05:00
-counter end -> 7
-counter:  7
-check default case:  2025-09-15T10:00:00-05:00
-counter end -> 6
-counter:  6
-check default case:  2025-09-15T11:00:00-05:00
-counter end -> 5
-counter:  5
-check default case:  2025-09-15T12:00:00-05:00
-counter end -> 4
-counter:  4
-check midday output:  2025-09-15T13:00:00-05:00
-counter:  4
-check default case:  2025-09-15T14:00:00-05:00
-counter end -> 3
-counter:  3
-check default case:  2025-09-15T15:00:00-05:00
-counter end -> 2
-counter:  2
-check default case:  2025-09-15T16:00:00-05:00
-counter end -> 1
-counter:  1
-check default case:  2025-09-15T17:00:00-05:00
-counter end -> 0
 
 check output case:  2025-09-15T17:00:00-05:00
 --------------------------------------------------
@@ -177,39 +61,6 @@ Original Date:  2025-09-15T08:00:00-05:00
 Hours:  0 
 Days:  1 
 
-counter:  9
-check default case:  2025-09-15T09:00:00-05:00
-counter end -> 8
-counter:  8
-check default case:  2025-09-15T10:00:00-05:00
-counter end -> 7
-counter:  7
-check default case:  2025-09-15T11:00:00-05:00
-counter end -> 6
-counter:  6
-check default case:  2025-09-15T12:00:00-05:00
-counter end -> 5
-counter:  5
-check midday output:  2025-09-15T13:00:00-05:00
-counter:  4
-check default case:  2025-09-15T14:00:00-05:00
-counter end -> 3
-counter:  3
-check default case:  2025-09-15T15:00:00-05:00
-counter end -> 2
-counter:  2
-check default case:  2025-09-15T16:00:00-05:00
-counter end -> 1
-counter:  1
-borderCase
-daysCounter,  1
-check default case:  2025-09-15T18:00:00-05:00
-counter end -> 1
-counter:  1
-check gte chout lte mdn output:  2025-09-16T08:00:00-05:00
-counter:  1
-check default case:  2025-09-16T08:00:00-05:00
-counter end -> -1
 
 check output case:  2025-09-16T08:00:00-05:00
 --------------------------------------------------
@@ -220,34 +71,6 @@ Original Date:  2025-09-15T12:30:00-05:00
 Hours:  0 
 Days:  1 
 
-counter:  9
-check midday output:  2025-09-15T13:00:00-05:00
-counter:  8
-check default case:  2025-09-15T14:00:00-05:00
-counter end -> 7
-counter:  7
-check default case:  2025-09-15T15:00:00-05:00
-counter end -> 6
-counter:  6
-check default case:  2025-09-15T16:00:00-05:00
-counter end -> 5
-counter:  5
-check default case:  2025-09-15T17:00:00-05:00
-counter end -> 4
-counter:  4
-check gte chout lte mdn output:  2025-09-16T08:00:00-05:00
-counter:  4
-check default case:  2025-09-16T09:00:00-05:00
-counter end -> 3
-counter:  3
-check default case:  2025-09-16T10:00:00-05:00
-counter end -> 2
-counter:  2
-check default case:  2025-09-16T11:00:00-05:00
-counter end -> 1
-counter:  1
-check default case:  2025-09-16T12:00:00-05:00
-counter end -> 0
 
 check output case:  2025-09-16T12:00:00-05:00
 --------------------------------------------------
@@ -258,19 +81,18 @@ Original Date:  2025-09-15T11:30:00-05:00
 Hours:  3 
 Days:  0 
 
-counter:  3
-check default case:  2025-09-15T12:30:00-05:00
-counter end -> 2
-counter:  2
-check midday output:  2025-09-15T13:30:00-05:00
-counter:  2
-check default case:  2025-09-15T14:30:00-05:00
-counter end -> 1
-counter:  1
-check default case:  2025-09-15T15:30:00-05:00
-counter end -> 0
 
 check output case:  2025-09-15T15:30:00-05:00
+--------------------------------------------------
+
+EJEMPLO NO:  9
+
+Original Date:  2025-04-10T15:00:00-05:00 
+Hours:  0 
+Days:  5 
+
+
+check output case:  2025-04-21T15:00:00-05:00
 --------------------------------------------------
 
 [34mCompleted running 'date.ts'[39m

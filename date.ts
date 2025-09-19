@@ -63,12 +63,12 @@ function getFormattedDate(
         currentSecond,
     ]: number[] = formatDate(inputDate, "E:HH:mm:ss").split(":").map(Number);
 
-    let totalHoursToProcess: number = hoursToAdd;
     let totalDaysToProcess: number = daysToAdd;
+    let totalHoursToProcess: number = hoursToAdd;
 
     while (totalHoursToProcess > 0 || totalDaysToProcess > 0) {
-        console.log("\ncounterD: ", totalDaysToProcess);
-        console.log("counterH: ", totalHoursToProcess);
+        // console.log("\ncounterD: ", totalDaysToProcess);
+        // console.log("counterH: ", totalHoursToProcess);
         [currentDayOfWeek, currentHour, currentMinute, currentSecond] =
             formatDate(inputDate, "E:HH:mm:ss").split(":").map(Number);
 
@@ -89,7 +89,7 @@ function getFormattedDate(
                 second: 0,
             });
             isFirstIteration && (isFirstIteration = false);
-            console.log("check weekend output: ", inputDate.format());
+            // console.log("check weekend output: ", inputDate.format());
             continue;
         }
 
@@ -101,7 +101,7 @@ function getFormattedDate(
         ) {
             setToDate(inputDate, { minute: 0, second: 0 });
             isFirstIteration = false;
-            console.log("check midday output: ", inputDate.format());
+            // console.log("check midday output: ", inputDate.format());
             continue;
         }
 
@@ -118,13 +118,14 @@ function getFormattedDate(
                 currentTimeInSeconds > workingHoursInSeconds.checkoutMs
                     ? 17
                     : 8;
-            addToDate(inputDate, 1, "days");
             setToDate(inputDate, {
                 hour: resetHout,
             });
-            !isFirstIteration && setToDate(inputDate, { minute: 0, second: 0 });
+            isFirstIteration && setToDate(inputDate, { minute: 0, second: 0 });
+            if (currentTimeInSeconds == workingHoursInSeconds.checkoutMs)
+                addToDate(inputDate, 1, "days");
             isFirstIteration && (isFirstIteration = false);
-            console.log("check gte chout lte mdn output: ", inputDate.format());
+            // console.log("check gte chout lte mdn output: ", inputDate.format());
             continue;
         }
 
@@ -139,8 +140,8 @@ function getFormattedDate(
             !holyDayArray.includes(inputDate.format("YYYY-MM-D")) &&
                 totalDaysToProcess--;
 
-            console.log("check days output: ", inputDate.format());
-            console.log("days left", totalDaysToProcess);
+            // console.log("check days output: ", inputDate.format());
+            // console.log("days left", totalDaysToProcess);
             isFirstIteration && (isFirstIteration = false);
             continue;
         }
@@ -151,15 +152,15 @@ function getFormattedDate(
         }
 
         isFirstIteration && (isFirstIteration = false);
-        console.log("check default case: ", inputDate.format());
-        console.log("counter end ->", totalHoursToProcess);
+        // console.log("check default case: ", inputDate.format());
+        // console.log("counter end ->", totalHoursToProcess);
     }
 
     console.log("\ncheck output case: ", inputDate.format());
     console.log("--------------------------------------------------\n");
 }
 
-getFormattedDate(moment("2025-09-11T18:30:00").tz("America/Bogota"), 1);
+getFormattedDate(moment("2025-09-12T17:00:00").tz("America/Bogota"), 1, 0);
 getFormattedDate(moment("2025-09-13T14:00:00").tz("America/Bogota"), 1);
 getFormattedDate(moment("2025-09-16T15:00:00").tz("America/Bogota"), 4, 1);
 getFormattedDate(moment("2025-09-14T18:00:00").tz("America/Bogota"), 0, 1);
@@ -167,4 +168,4 @@ getFormattedDate(moment("2025-09-15T08:00:00").tz("America/Bogota"), 8);
 getFormattedDate(moment("2025-09-15T08:00:00").tz("America/Bogota"), 0, 1);
 getFormattedDate(moment("2025-09-15T12:30:00").tz("America/Bogota"), 0, 1);
 getFormattedDate(moment("2025-09-15T11:30:00").tz("America/Bogota"), 3);
-getFormattedDate(moment("2025-04-10T12:30:00").tz("America/Bogota"), 0, 5);
+getFormattedDate(moment("2025-04-10T15:00:00").tz("America/Bogota"), 0, 5);
