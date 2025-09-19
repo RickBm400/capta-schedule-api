@@ -1,4 +1,5 @@
 import moment, { Moment } from "moment-timezone";
+import { holyDayArray } from "./src/utils/holidays.utils";
 
 const weekendDayNumbers = [6, 7];
 
@@ -17,6 +18,10 @@ const addToDate = (
     amount: number = 0,
     unit: "hours" | "days" | "minutes" = "days"
 ): Moment => date.add(amount, unit);
+
+const formatDate = (date: Moment, format: string) => {
+    return date.format(format);
+};
 
 const workingHoursInSeconds = {
     startLunchMs: timeToSeconds("12:00:00"),
@@ -56,15 +61,16 @@ function getFormattedDate(
         currentHour,
         currentMinute,
         currentSecond,
-    ]: number[] = inputDate.format("E:HH:mm:ss").split(":").map(Number);
+    ]: number[] = formatDate(inputDate, "E:HH:mm:ss").split(":").map(Number);
 
     let totalHoursToProcess: number = hoursToAdd;
     let totalDaysToProcess: number = daysToAdd;
 
     while (totalHoursToProcess > 0 || totalDaysToProcess > 0) {
-        console.log("counter: ", totalHoursToProcess);
+        console.log("\ncounterD: ", totalDaysToProcess);
+        console.log("counterH: ", totalHoursToProcess);
         [currentDayOfWeek, currentHour, currentMinute, currentSecond] =
-            inputDate.format("E:HH:mm:ss").split(":").map(Number);
+            formatDate(inputDate, "E:HH:mm:ss").split(":").map(Number);
 
         const currentTimeInSeconds = timeToSeconds(
             [currentHour, currentMinute, currentSecond].join(":")
@@ -89,19 +95,12 @@ function getFormattedDate(
 
         // Check Midday Lunch
         if (
-            currentTimeInSeconds >= workingHoursInSeconds.startLunchMs &&
-            currentTimeInSeconds < workingHoursInSeconds.endLunchMs
+            currentTimeInSeconds > workingHoursInSeconds.startLunchMs &&
+            currentTimeInSeconds < workingHoursInSeconds.endLunchMs &&
+            isFirstIteration
         ) {
-            if (isFirstIteration) {
-                setToDate(inputDate, { minute: 0, second: 0 });
-                isFirstIteration = false;
-            } else {
-                if (totalDaysToProcess > 0) {
-                    addToDate(inputDate, 1, "days");
-                    totalDaysToProcess--;
-                }
-                addToDate(inputDate, 1, "hours");
-            }
+            setToDate(inputDate, { minute: 0, second: 0 });
+            isFirstIteration = false;
             console.log("check midday output: ", inputDate.format());
             continue;
         }
@@ -114,33 +113,41 @@ function getFormattedDate(
                 (currentTimeInSeconds > workingHoursInSeconds.midNight &&
                     currentTimeInSeconds < workingHoursInSeconds.checkinMs))
         ) {
+            const resetHout =
+                isFirstIteration &&
+                currentTimeInSeconds > workingHoursInSeconds.checkoutMs
+                    ? 17
+                    : 8;
             addToDate(inputDate, 1, "days");
             setToDate(inputDate, {
-                hour:
-                    isFirstIteration &&
-                    currentTimeInSeconds > workingHoursInSeconds.checkoutMs
-                        ? 17
-                        : 8,
+                hour: resetHout,
             });
             !isFirstIteration && setToDate(inputDate, { minute: 0, second: 0 });
-            console.log("check gte chout lte mdn output: ", inputDate.format());
             isFirstIteration && (isFirstIteration = false);
+            console.log("check gte chout lte mdn output: ", inputDate.format());
             continue;
         }
 
         if (totalDaysToProcess > 0) {
             let daysToAdd = 1;
+
             if (weekendDayNumbers.includes(currentDayOfWeek + 1)) {
                 daysToAdd = 8 - currentDayOfWeek;
             }
             addToDate(inputDate, daysToAdd, "days");
-            totalDaysToProcess--;
+
+            !holyDayArray.includes(inputDate.format("YYYY-MM-D")) &&
+                totalDaysToProcess--;
+
+            console.log("check days output: ", inputDate.format());
+            console.log("days left", totalDaysToProcess);
+            isFirstIteration && (isFirstIteration = false);
             continue;
         }
 
         if (totalHoursToProcess > 0) {
             addToDate(inputDate, 1, "hours");
-            totalHoursToProcess--;
+            currentHour != 12 && totalHoursToProcess--;
         }
 
         isFirstIteration && (isFirstIteration = false);
@@ -152,11 +159,12 @@ function getFormattedDate(
     console.log("--------------------------------------------------\n");
 }
 
-getFormattedDate(moment("2025-09-12T17:00:00").tz("America/Bogota"), 1);
+getFormattedDate(moment("2025-09-11T18:30:00").tz("America/Bogota"), 1);
 getFormattedDate(moment("2025-09-13T14:00:00").tz("America/Bogota"), 1);
 getFormattedDate(moment("2025-09-16T15:00:00").tz("America/Bogota"), 4, 1);
-getFormattedDate(moment("2025-09-14T18:00:00").tz("America/Bogota"), 0, 1); // 1 día 4
-getFormattedDate(moment("2025-09-15T08:00:00").tz("America/Bogota"), 8); // 8 horas
-getFormattedDate(moment("2025-09-15T08:00:00").tz("America/Bogota"), 0, 1); // 1 día 6
-getFormattedDate(moment("2025-09-15T12:30:00").tz("America/Bogota"), 0, 1); // 7
+getFormattedDate(moment("2025-09-14T18:00:00").tz("America/Bogota"), 0, 1);
+getFormattedDate(moment("2025-09-15T08:00:00").tz("America/Bogota"), 8);
+getFormattedDate(moment("2025-09-15T08:00:00").tz("America/Bogota"), 0, 1);
+getFormattedDate(moment("2025-09-15T12:30:00").tz("America/Bogota"), 0, 1);
 getFormattedDate(moment("2025-09-15T11:30:00").tz("America/Bogota"), 3);
+getFormattedDate(moment("2025-04-10T12:30:00").tz("America/Bogota"), 0, 5);
