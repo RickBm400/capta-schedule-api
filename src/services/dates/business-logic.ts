@@ -1,45 +1,43 @@
 import type { Moment } from "moment-timezone";
 import { DateValidations } from "./validations.ts";
 import moment from "moment-timezone";
-import type { DateServiceInput } from "../../types/dates.interfaces.ts";
+import type {
+    DateBusinessLogicInput,
+    DateServiceInput,
+    IDateCalc,
+} from "../../types/dates.interfaces.ts";
 import { holyDayArray } from "../../utils/holidays.utils.ts";
 import { DatesCalculatorUtils } from "./calculator.ts";
 
 export class DateBusinessLogic {
-    protected currentHours: number = 0;
-    protected currentMinutes: number = 0;
-    protected currentSeconds: number = 0;
-    protected currentDayOfWeek: number = 0;
-    protected currentDate: Moment;
-    protected fullTimeInSeconds: number = 0;
+    private currentHours: number = 0;
+    private currentMinutes: number = 0;
+    private currentSeconds: number = 0;
+    private currentDayOfWeek: number = 0;
+    private currentDate: Moment;
+    private fullTimeInSeconds: number = 0;
 
-    protected firstLoop: Boolean = true;
-    protected totalDaysToProcess: number = 0;
-    protected totalHoursToProcess: number = 0;
+    private firstLoop: Boolean = true;
+    private totalDaysToProcess: number = 0;
+    private totalHoursToProcess: number = 0;
 
     // Calculator and Validations utilities class
-    protected utils: DatesCalculatorUtils = new DatesCalculatorUtils();
-    protected validations: DateValidations = new DateValidations(this.utils);
+    private utils: DatesCalculatorUtils = new DatesCalculatorUtils();
+    private validations: DateValidations = new DateValidations(this.utils);
 
-    constructor({
-        date,
-        timeZone = "America/Bogota",
-    }: {
-        date: string;
-        timeZone?: string;
-    }) {
+    constructor({ date, timeZone = "America/Bogota" }: DateBusinessLogicInput) {
         this.currentDate = moment(date).tz(timeZone);
         this.setCurrentData();
         this.setFullTimeInSeconds();
     }
 
-    protected setFullTimeInSeconds() {
+    private setFullTimeInSeconds(): DateBusinessLogic {
         const timeFormatted = this.utils.format(this.currentDate, "HH:mm:ss");
         this.fullTimeInSeconds = this.utils.timeToSeconds(timeFormatted);
         return this;
     }
 
-    protected setCurrentData() {
+    private setCurrentData(): DateBusinessLogic {
         const [day, hour, minute, second]: number[] = this.utils
             .format(this.currentDate, "E:HH:mm:ss")
             .split(":")
@@ -52,7 +50,7 @@ export class DateBusinessLogic {
         return this;
     }
 
-    protected skipWeekend(): void {
+    private skipWeekend(): void {
         const daysToSkips = this.firstLoop
             ? 5 - this.currentDayOfWeek
             : 8 - this.currentDayOfWeek; // if first loop is true, skip back, else skip forwar to next workind date
@@ -69,12 +67,12 @@ export class DateBusinessLogic {
         this.firstLoop = false;
     }
 
-    protected skipLunchHour(): void {
+    private skipLunchHour(): void {
         this.utils.setToDate(this.currentDate, { minute: 0, second: 0 });
         this.firstLoop = false;
     }
 
-    protected skipToNextDay(): void {
+    private skipToNextDay(): void {
         const { setToDate, addToDate, BUSINESS_HOURS } = this.utils;
         const resetHour =
             this.firstLoop && this.fullTimeInSeconds > BUSINESS_HOURS.mdNight
@@ -91,7 +89,7 @@ export class DateBusinessLogic {
         this.firstLoop = false;
     }
 
-    protected processDay(holyDays: string[]) {
+    private processDay(holyDays: string[]): void {
         let daysToAdd = 1;
         if (this.validations.isWeekendDay(this.currentDayOfWeek, 1)) {
             // Calculates next working days
@@ -110,17 +108,17 @@ export class DateBusinessLogic {
         this.firstLoop = false;
     }
 
-    protected processHour() {
+    private processHour() {
         this.utils.addToDate(this.currentDate, 1, "hours");
         if (this.currentHours != 12) this.totalHoursToProcess--; // Skip to next hour if not lunch hour,
     }
 
     /**
-     * While loop for calc iterations
+     * Calculates the date based on the input parameters
      * @param param0
      * @returns
      */
-    public calc({ hours, days }: DateServiceInput) {
+    public calc({ hours, days }: IDateCalc) {
         this.totalDaysToProcess = days || 0;
         this.totalHoursToProcess = hours || 0;
         const holyDays = holyDayArray;

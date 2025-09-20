@@ -19,8 +19,20 @@ export interface WorkingHoursInSeconds {
 }
 
 export interface DateServiceInput {
+    date: string;
     hours?: number;
     days?: number;
+    timeZone?: string;
+}
+
+export interface DateBusinessLogicInput {
+    date: string;
+    timeZone?: string;
+}
+
+export interface IDateCalc {
+    hours: number | undefined;
+    days: number | undefined;
 }
 
 export abstract class DatesCalculationImpl<T> {
