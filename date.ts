@@ -161,11 +161,11 @@ function getFormattedDate(
 }
 
 getFormattedDate(moment("2025-09-12T17:00:00").tz("America/Bogota"), 1, 0);
-getFormattedDate(moment("2025-09-13T14:00:00").tz("America/Bogota"), 1);
-getFormattedDate(moment("2025-09-16T15:00:00").tz("America/Bogota"), 4, 1);
-getFormattedDate(moment("2025-09-14T18:00:00").tz("America/Bogota"), 0, 1);
-getFormattedDate(moment("2025-09-15T08:00:00").tz("America/Bogota"), 8);
-getFormattedDate(moment("2025-09-15T08:00:00").tz("America/Bogota"), 0, 1);
-getFormattedDate(moment("2025-09-15T12:30:00").tz("America/Bogota"), 0, 1);
-getFormattedDate(moment("2025-09-15T11:30:00").tz("America/Bogota"), 3);
-getFormattedDate(moment("2025-04-10T15:00:00").tz("America/Bogota"), 0, 5);
+// getFormattedDate(moment("2025-09-13T14:00:00").tz("America/Bogota"), 1);
+// getFormattedDate(moment("2025-09-16T15:00:00").tz("America/Bogota"), 4, 1);
+// getFormattedDate(moment("2025-09-14T18:00:00").tz("America/Bogota"), 0, 1);
+// getFormattedDate(moment("2025-09-15T08:00:00").tz("America/Bogota"), 8);
+// getFormattedDate(moment("2025-09-15T08:00:00").tz("America/Bogota"), 0, 1);
+// getFormattedDate(moment("2025-09-15T12:30:00").tz("America/Bogota"), 0, 1);
+// getFormattedDate(moment("2025-09-15T11:30:00").tz("America/Bogota"), 3);
+// getFormattedDate(moment("2025-04-10T15:00:00").tz("America/Bogota"), 0, 5);
