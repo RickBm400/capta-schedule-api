@@ -4,6 +4,11 @@ export interface setToDateParams {
     second?: number;
 }
 
+export enum TimeZonesEnum {
+    BOGOTA = "America/Bogota",
+    MEXICO = "America/Mexico_City",
+}
+
 export enum dateUnits {
     hours = "hours",
     days = "days",
@@ -26,8 +31,8 @@ export interface DateServiceInput {
 }
 
 export interface DateBusinessLogicInput {
-    date: string;
-    timeZone?: string;
+    date: string | undefined;
+    timeZone?: string | TimeZonesEnum | undefined;
 }
 
 export interface IDateCalc {

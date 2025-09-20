@@ -6,11 +6,8 @@ export function calculateDateSkips({
     hours,
     days,
     timeZone,
-}: DateServiceInput) {
-    return new DateBusinessLogic({ date: date }).calc({
-        hours,
-        days,
-    });
+}: Partial<DateServiceInput>) {
+    return new DateBusinessLogic({ date, timeZone }).calc({ days, hours });
 }
 
 // console.log(
@@ -55,7 +52,7 @@ export function calculateDateSkips({
 //     })
 // );
 // console.log(
-//     new DateBusinessLogic({ date: "2025-04-10T15:00:00" }).calc({
+//     new DateBusinessLogic({ date: "2025-04-10T18:30:00" }).calc({
 //         days: 5,
 //     })
 // );

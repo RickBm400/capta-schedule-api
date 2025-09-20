@@ -49,7 +49,7 @@ export class DateValidations {
     public isLeavingHour(fullTimeInSeconds: number): Boolean {
         const { checkin, checkout, mdNight } = this.utils.BUSINESS_HOURS;
         return (
-            (fullTimeInSeconds >= checkout && fullTimeInSeconds <= mdNight) ||
+            (fullTimeInSeconds > checkout && fullTimeInSeconds <= mdNight) ||
             (fullTimeInSeconds > mdNight && fullTimeInSeconds < checkin)
         );
     }
