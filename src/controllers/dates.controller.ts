@@ -10,19 +10,13 @@ import type { DateServiceInput } from "../types/dates.interfaces.ts";
 const asyncHandler = expressAsyncHandler;
 const router: Router = Router();
 
-interface queryInterface {
-    date: number;
-    hours: number;
-    days: number;
-}
-
 router.get(
     "/",
     validateQuery(DateParamsInputDto),
     asyncHandler(async (req: Request, res: Response) => {
         const query = DateParamsInputDto.safeParse(req.query).data;
 
-        const calculated = calculateDateSkips(
+        const calculated = await calculateDateSkips(
             query as unknown as DateServiceInput
         );
         res.status(StatusCodes.OK).json({

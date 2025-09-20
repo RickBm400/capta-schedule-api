@@ -4,7 +4,7 @@ import {
     type WorkingHoursInSeconds,
 } from "../../types/dates.interfaces.ts";
 
-export class DatesCalculatorUtils implements DatesCalculationImpl<Moment> {
+export class DateUtils implements DatesCalculationImpl<Moment> {
     public readonly WEEKEND_DAYS: number[] = [6, 7] as const; // Saturday and sunday as days in week
 
     /**
@@ -54,6 +54,15 @@ export class DatesCalculatorUtils implements DatesCalculationImpl<Moment> {
      */
     public format = (date: Moment, format: string): any => {
         return date.format(format);
+    };
+
+    /**
+     * Convert local date to utc
+     * @param date
+     * @returns
+     */
+    public getUTC = (date: Moment): Moment => {
+        return date.utc();
     };
 
     /**

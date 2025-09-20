@@ -1,28 +1,20 @@
-import { DatesCalculatorUtils } from "./calculator.ts";
+import { DateUtils } from "./calculator.ts";
 
 /**
  * Class for date validation logic
  */
 export class DateValidations {
-    protected utils: DatesCalculatorUtils;
-
-    constructor(utils: DatesCalculatorUtils) {
-        this.utils = utils;
-    }
+    protected utils: DateUtils = new DateUtils();
 
     /**
      * Check if the current day of the week is a weekend day.
      *
      * @public
      * @param {number} currentDayOfWeek
-     * @param {number} [dayToAdd=0]
      * @returns {Boolean}
      */
-    public isWeekendDay(
-        currentDayOfWeek: number,
-        dayToAdd: number = 0
-    ): Boolean {
-        return this.utils.WEEKEND_DAYS.includes(currentDayOfWeek + dayToAdd);
+    public isWeekendDay(currentDayOfWeek: number): Boolean {
+        return this.utils.WEEKEND_DAYS.includes(currentDayOfWeek);
     }
 
     /**

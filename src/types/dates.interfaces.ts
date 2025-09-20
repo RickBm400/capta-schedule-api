@@ -33,11 +33,12 @@ export interface DateServiceInput {
 export interface DateBusinessLogicInput {
     date: string | undefined;
     timeZone?: string | TimeZonesEnum | undefined;
+    holidays: string[];
 }
 
 export interface IDateCalc {
-    hours: number | undefined;
-    days: number | undefined;
+    hours?: number | undefined;
+    days?: number | undefined;
 }
 
 export abstract class DatesCalculationImpl<T> {

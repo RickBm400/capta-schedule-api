@@ -1,5 +1,5 @@
-import axios, { type AxiosInstance } from 'axios';
-import env from '../configs/environment.ts';
+import axios, { type AxiosInstance } from "axios";
+import env from "../configs/environment.ts";
 
 /**
  * Axios base instance for http requests
@@ -7,10 +7,10 @@ import env from '../configs/environment.ts';
  * @type {AxiosInstance}
  */
 const httpClient: AxiosInstance = axios.create({
-  timeout: 1000,
-  headers: {
-    'Content-Type': 'application/json',
-  },
+    timeout: 1000,
+    headers: {
+        "Content-Type": "application/json",
+    },
 });
 
 /**
@@ -20,15 +20,15 @@ const httpClient: AxiosInstance = axios.create({
  * @async
  * @returns {Promise<any>}
  */
-export async function getHolidays(): Promise<{ data: string }> {
-  try {
-    const _response = await httpClient.get(env.API_CAPTA_HOLYDATES);
-    if (!_response) throw new Error('Error: Invalid api call');
+export async function getHolidays(): Promise<{ data: string[] }> {
+    try {
+        const _response = await httpClient.get(env.API_CAPTA_HOLYDATES);
+        if (!_response) throw new Error("Error: Invalid api call");
 
-    return { data: _response.data };
-  } catch (error: any) {
-    return error;
-  }
+        return { data: _response.data };
+    } catch (error: any) {
+        return error;
+    }
 }
 
 // TODO: implement caching and error handling

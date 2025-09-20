@@ -4,15 +4,15 @@ import moment from "moment-timezone";
 import {
     TimeZonesEnum,
     type DateBusinessLogicInput,
+    type IDateCalc,
 } from "../../types/dates.interfaces.ts";
-import { holyDayArray } from "../../utils/holidays.utils.ts";
-import { DatesCalculatorUtils } from "./calculator.ts";
+import { DateUtils } from "./calculator.ts";
 
 export class DateBusinessLogic {
     private currentDate: Moment;
     private currentHours: number = 0;
-    protected currentMinutes: number = 0;
-    protected currentSeconds: number = 0;
+    private currentMinutes: number = 0;
+    private currentSeconds: number = 0;
     private currentDayOfWeek: number = 0;
     private fullTimeInSeconds: number = 0;
 
@@ -21,14 +21,17 @@ export class DateBusinessLogic {
     private totalHoursToProcess: number = 0;
 
     // Calculator and Validations utilities class
-    private utils: DatesCalculatorUtils = new DatesCalculatorUtils();
-    private validations: DateValidations = new DateValidations(this.utils);
+    private utils: DateUtils = new DateUtils();
+    private validations: DateValidations = new DateValidations();
+    private readonly holidays: string[];
 
     constructor({
         date,
         timeZone = TimeZonesEnum.BOGOTA,
+        holidays,
     }: DateBusinessLogicInput) {
         this.currentDate = moment(date).tz(timeZone);
+        this.holidays = holidays;
         this.setCurrent();
         this.setFullTimeInSeconds();
     }
@@ -76,6 +79,8 @@ export class DateBusinessLogic {
 
     private skipToNextDay(): void {
         const { setToDate, addToDate, BUSINESS_HOURS } = this.utils;
+
+        // Reset hour to 17 if it's the checkout hour and it's the first loop
         const resetHour =
             this.firstLoop &&
             this.validations.isLeavingHour(this.fullTimeInSeconds)
@@ -97,7 +102,9 @@ export class DateBusinessLogic {
 
     private processDay(holyDays: string[]): void {
         let daysToAdd = 1;
-        if (this.validations.isWeekendDay(this.currentDayOfWeek, 1)) {
+
+        // checks if next day is a weekend day
+        if (this.validations.isWeekendDay(this.currentDayOfWeek + 1)) {
             // Calculates next working days
             daysToAdd = 8 - this.currentDayOfWeek;
         }
@@ -116,7 +123,10 @@ export class DateBusinessLogic {
 
     private processHour() {
         this.utils.addToDate(this.currentDate, 1, "hours");
-        if (this.currentHours != 12) this.totalHoursToProcess--; // Skip to next hour if not lunch hour,
+        if (this.currentHours != 12) {
+            this.totalHoursToProcess--;
+        } // Skip to next hour if not lunch hour,
+
         // Skips to next day at 08:00 AM
         if (this.currentHours == 17) {
             this.utils.setToDate(this.currentDate, { hour: 8 });
@@ -130,20 +140,19 @@ export class DateBusinessLogic {
      * @param param0
      * @returns
      */
-    public calc({
-        hours,
-        days,
-    }: {
-        hours?: number | undefined;
-        days?: number | undefined;
-    }) {
+    public calculate({ hours, days }: IDateCalc) {
         this.totalDaysToProcess = days || 0;
         this.totalHoursToProcess = hours || 0;
-        const holyDays = holyDayArray;
+        const holyDays = this.holidays;
+
+        if (this.totalHoursToProcess <= 0 && this.totalDaysToProcess <= 0) {
+            return this.currentDate.format();
+        }
 
         while (this.totalHoursToProcess > 0 || this.totalDaysToProcess > 0) {
             this.setCurrent();
             this.setFullTimeInSeconds();
+
             // console.log(this.currentDate.format());
 
             if (this.validations.isWeekendDay(this.currentDayOfWeek)) {
@@ -176,6 +185,7 @@ export class DateBusinessLogic {
             this.firstLoop = false;
         }
 
-        return this.currentDate.format();
+        // Convert result to UTC format
+        return this.utils.getUTC(this.currentDate).format();
     }
 }
