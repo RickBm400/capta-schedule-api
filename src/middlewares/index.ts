@@ -2,7 +2,8 @@
 import { type Request, type Response, type NextFunction } from "express";
 import { z, ZodError } from "zod";
 
-import { StatusCodes } from "http-status-codes";
+import { StatusCodes, getReasonPhrase } from "http-status-codes";
+import { CustomError } from "../utils/exceptions.ts";
 
 export function validateQuery(schema: z.ZodObject<any, any>) {
     return (req: Request, res: Response, next: NextFunction) => {
@@ -25,4 +26,19 @@ export function validateQuery(schema: z.ZodObject<any, any>) {
             }
         }
     };
+}
+
+export function ExceptionMiddleware(
+    err: Error | CustomError,
+    req: Request,
+    res: Response,
+    next: NextFunction
+) {
+    const statusCode = err instanceof CustomError ? err.statusCode : 500;
+    const message = err.message || "Something went wrong!";
+
+    res.status(statusCode).json({
+        message,
+        error: getReasonPhrase(statusCode),
+    });
 }
