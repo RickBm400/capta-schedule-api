@@ -9,12 +9,15 @@ export class DateBusinessLogic {
     protected currentHours: number = 0;
     protected currentMinutes: number = 0;
     protected currentSeconds: number = 0;
-    protected firstRound: Boolean = true;
+    protected currentDayOfWeek: number = 0;
+    protected currentDate: Moment;
+    protected fullTimeInSeconds: number = 0;
+
+    protected firstLoop: Boolean = true;
     protected totalDaysToProcess: number = 0;
     protected totalHoursToProcess: number = 0;
-    protected currentDayOfWeek: number = 0;
-    protected fullTimeInSeconds: number = 0;
-    protected currentDate: Moment;
+
+    // Calculator and Validations utilities class
     protected utils: DatesCalculatorUtils = new DatesCalculatorUtils();
     protected validations: DateValidations = new DateValidations(this.utils);
 
@@ -50,64 +53,74 @@ export class DateBusinessLogic {
     }
 
     protected skipWeekend(): void {
-        const daysToSkips = this.firstRound
+        const daysToSkips = this.firstLoop
             ? 5 - this.currentDayOfWeek
-            : 8 - this.currentDayOfWeek;
-        const hoursToSkip = this.firstRound ? 17 : 8;
+            : 8 - this.currentDayOfWeek; // if first loop is true, skip back, else skip forwar to next workind date
+
+        const hoursToSkip = this.firstLoop ? 17 : 8;
+
         this.utils.addToDate(this.currentDate, daysToSkips, "days");
         this.utils.setToDate(this.currentDate, {
             hour: hoursToSkip,
             minute: 0,
             second: 0,
         });
-        this.firstRound = false;
+
+        this.firstLoop = false;
     }
 
     protected skipLunchHour(): void {
         this.utils.setToDate(this.currentDate, { minute: 0, second: 0 });
-        this.firstRound = false;
+        this.firstLoop = false;
     }
 
     protected skipToNextDay(): void {
         const { setToDate, addToDate, BUSINESS_HOURS } = this.utils;
         const resetHour =
-            this.firstRound && this.fullTimeInSeconds > BUSINESS_HOURS.mdNight
+            this.firstLoop && this.fullTimeInSeconds > BUSINESS_HOURS.mdNight
                 ? 17
                 : 8;
 
         setToDate(this.currentDate, { hour: resetHour });
-        if (this.firstRound) {
+        if (this.firstLoop) {
             setToDate(this.currentDate, { minute: 0, second: 0 });
         }
         if (this.fullTimeInSeconds == BUSINESS_HOURS.checkout) {
             addToDate(this.currentDate, 1, "days");
         }
-        this.firstRound = false;
+        this.firstLoop = false;
     }
 
     protected processDay(holyDays: string[]) {
         let daysToAdd = 1;
         if (this.validations.isWeekendDay(this.currentDayOfWeek, 1)) {
+            // Calculates next working days
             daysToAdd = 8 - this.currentDayOfWeek;
         }
 
         this.utils.addToDate(this.currentDate, daysToAdd, "days");
 
+        // keeps days counter when not a holy day
         if (
             !holyDays.includes(this.utils.format(this.currentDate, "YYYY-MM-D"))
         ) {
             this.totalDaysToProcess--;
         }
 
-        this.firstRound = false;
+        this.firstLoop = false;
     }
 
     protected processHour() {
         this.utils.addToDate(this.currentDate, 1, "hours");
-        if (this.currentHours != 12) this.totalHoursToProcess--;
+        if (this.currentHours != 12) this.totalHoursToProcess--; // Skip to next hour if not lunch hour,
     }
 
-    public calculateDate({ hours, days }: DateServiceInput) {
+    /**
+     * While loop for calc iterations
+     * @param param0
+     * @returns
+     */
+    public calc({ hours, days }: DateServiceInput) {
         this.totalDaysToProcess = days || 0;
         this.totalHoursToProcess = hours || 0;
         const holyDays = holyDayArray;
@@ -117,15 +130,15 @@ export class DateBusinessLogic {
             this.setFullTimeInSeconds();
 
             if (this.validations.isWeekendDay(this.currentDayOfWeek)) {
-                this.skipWeekend();
+                this.skipWeekend(); // Skips back and forward weekend days
                 continue;
             }
 
             if (
                 this.validations.isMidDay(this.fullTimeInSeconds) &&
-                this.firstRound
+                this.firstLoop
             ) {
-                this.skipLunchHour();
+                this.skipLunchHour(); // Reset date minutes and seconds if request is made between lunch hour
                 continue;
             }
 
@@ -133,7 +146,7 @@ export class DateBusinessLogic {
                 this.validations.isLeavingHour(this.fullTimeInSeconds) &&
                 this.totalDaysToProcess <= 0
             ) {
-                this.skipToNextDay();
+                this.skipToNextDay(); // Skips back and forward leaving hours
                 continue;
             }
 
@@ -146,7 +159,7 @@ export class DateBusinessLogic {
                 this.processHour();
             }
 
-            this.firstRound = false;
+            this.firstLoop = false;
         }
 
         return this.currentDate.format();
