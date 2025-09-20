@@ -5,6 +5,13 @@ import { z, ZodError } from "zod";
 import { StatusCodes, getReasonPhrase } from "http-status-codes";
 import { CustomError } from "../utils/exceptions.ts";
 
+/**
+ * Zod middleware for query validations
+ *
+ * @export
+ * @param {z.ZodObject<any, any>} schema
+ * @returns {(req: Request, res: Response, next: NextFunction) => void}
+ */
 export function validateQuery(schema: z.ZodObject<any, any>) {
     return (req: Request, res: Response, next: NextFunction) => {
         try {
@@ -28,6 +35,15 @@ export function validateQuery(schema: z.ZodObject<any, any>) {
     };
 }
 
+/**
+ * Exception middleware for handling errors in the application
+ *
+ * @export
+ * @param {(Error | CustomError)} err
+ * @param {Request} req
+ * @param {Response} res
+ * @param {NextFunction} next
+ */
 export function ExceptionMiddleware(
     err: Error | CustomError,
     req: Request,
