@@ -8,7 +8,7 @@
         "debug:dates": "tsx --inspect --watch date.ts ",
         "debug:dates2": "tsx --inspect --watch ./src/services/dates.service.ts ",
         "dev": "tsx ./src/main.ts",
-        "test": "jest",
+        "test": "jest --ci",
         "test:debug": "jest --watch",
         "build": "tsc"
     },
