@@ -8,10 +8,10 @@ export const calculateDateSkips = async ({
     days,
     timeZone,
 }: Partial<DateServiceInput>) => {
-    const _holydays = await getHolidays();
+    const holidays = (await getHolidays()).data;
     return new DateBusinessLogic({
         date,
         timeZone,
-        holidays: _holydays.data,
+        holidays,
     }).calculate({ days, hours });
 };

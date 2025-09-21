@@ -7,7 +7,7 @@ import { DateParamsInputDto } from "../types/validations/date-params.dto.ts";
 import { calculateDateSkips } from "../services/dates.service.ts";
 import type { DateServiceInput } from "../types/dates.interfaces.ts";
 import { CustomError } from "../utils/exceptions.ts";
-import { ErrorLogs } from "../utils/errors.ts";
+import { ErrorLogs } from "../utils/error-logs.ts";
 
 const asyncHandler = expressAsyncHandler;
 const router: Router = Router();

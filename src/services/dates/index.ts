@@ -36,12 +36,20 @@ export class DateBusinessLogic {
         this.setFullTimeInSeconds();
     }
 
+    /**
+     * convert current time in seconds
+     * @returns DateBusinessLogic
+     */
     private setFullTimeInSeconds(): DateBusinessLogic {
         const timeFormatted = this.utils.format(this.currentDate, "HH:mm:ss");
         this.fullTimeInSeconds = this.utils.timeToSeconds(timeFormatted);
         return this;
     }
 
+    /**
+     * initialize date params
+     * @returns DateBusinessLogic
+     */
     private setCurrent(): DateBusinessLogic {
         const [day, hour, minute, second]: number[] = this.utils
             .format(this.currentDate, "E:HH:mm:ss")
