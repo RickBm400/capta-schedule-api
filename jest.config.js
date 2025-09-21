@@ -6,4 +6,9 @@ module.exports = {
     moduleFileExtensions: ["ts", "node", "js"],
     verbose: true,
     forceExit: false,
+    globals: {
+        'ts-test': {
+            useESM: true
+        }
+    }
 };
