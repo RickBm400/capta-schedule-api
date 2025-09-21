@@ -23,7 +23,7 @@ jobs:
               with:
                   node-version: "20.16.0"
 
-            - name: npm install, build, and test
+            - name: npm install, test
               run: |
                   npm ci
                   npm run test --if-present
