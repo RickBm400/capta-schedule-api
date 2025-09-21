@@ -3,7 +3,6 @@ import { DateBusinessLogic } from "../services/dates/index.ts";
 import request from "supertest";
 import { ErrorLogs } from "../utils/error-logs.ts";
 import { getHolidays } from "../external/holidays.api.ts";
-import { string } from "zod";
 
 describe("date-business-logic", () => {
     it("Should return the correct result in utc", () => {
