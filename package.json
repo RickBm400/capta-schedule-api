@@ -11,7 +11,7 @@
         "test": "jest --ci",
         "test:debug": "jest --watch",
         "build": "tsc",
-        "main": "node ./dist/main.js"
+        "start": "node ./dist/main.js"
     },
     "author": "RickBm400",
     "license": "ISC",

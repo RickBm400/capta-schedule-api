@@ -7,8 +7,9 @@ module.exports = {
     verbose: true,
     forceExit: false,
     globals: {
-        'ts-test': {
-            useESM: true
-        }
-    }
+        "ts-test": {
+            useESM: true,
+        },
+    },
+    coveragePathIgnorePatterns: ["/node_modules/"],
 };
