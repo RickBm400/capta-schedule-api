@@ -6,7 +6,7 @@ import { getHolidays } from "../external/holidays.api.ts";
 
 describe("date-business-logic", () => {
     it("Should return the correct result in utc", () => {
-        const inputDate = "2025-09-12T17:00:00"; // Friday
+        const inputDate = "2025-09-12T17:00:00-05:00"; // Friday
         const days = 0;
         const hours = 1;
         const holidays: any[] = [];
