@@ -14,6 +14,10 @@ jobs:
         runs-on: ubuntu-latest
         permissions:
             contents: read #This is required for actions/checkout
+        env:
+            PORT: ${{secrets.PORT}}
+            API_CAPTA_HOLYDATES: ${{secrets.API_CAPTA_HOLYDATES}}
+            API_VERSION: ${{secrets.API_VERSION}}
 
         steps:
             - uses: actions/checkout@v4
