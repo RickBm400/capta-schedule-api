@@ -16,26 +16,23 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Validate API version
-        run: "echo Deploying API version: $API_VERSION"
-
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      - name: Install dependencies, run tests, build
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
         env:
           PORT: ${{ secrets.PORT }}
           API_CAPTA_HOLYDATES: ${{ secrets.API_CAPTA_HOLYDATES }}
           API_VERSION: ${{ secrets.API_VERSION }}
-        run: |
-          npm ci
-          npm run test --coverage --if-present
+        run: npm run test --coverage --if-present
 
       - name: Build application
-        run: |
-          npm run build
+        run: npm run build
 
       - name: Prepare deployment package
         run: |
@@ -61,6 +58,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: node-app
+          path: deploy/
 
       - name: Login to Azure
         uses: azure/login@v2
