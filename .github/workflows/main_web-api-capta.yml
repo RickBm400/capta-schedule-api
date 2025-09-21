@@ -31,7 +31,11 @@ jobs:
           API_VERSION: ${{ secrets.API_VERSION }}
         run: |
           npm ci
+          npm run dev &&
           npm run test --coverage --if-present
+
+      - name: Build application
+        run: |
           npm run build
 
       - name: Prepare deployment package
