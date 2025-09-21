@@ -6,7 +6,7 @@ import {
     type DateBusinessLogicInput,
     type IDateCalc,
 } from "../../types/dates.interfaces";
-import { DateUtils } from "./calculator";
+import { DateUtils } from "./utils";
 
 export class DateBusinessLogic {
     private currentDate: Moment;
