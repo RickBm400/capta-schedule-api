@@ -24,7 +24,7 @@ Create a `.env` file:
 ```env
 PORT=3000
 API_CAPTA_HOLYDATES="https://content.capta.co/Recruitment/WorkingDays.json"
-API_VERSION="/v1/dates"
+API_VERSION="/v1"
 ```
 
 ## Available Scripts
