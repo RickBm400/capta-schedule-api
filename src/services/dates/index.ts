@@ -1,12 +1,12 @@
 import type { Moment } from "moment-timezone";
-import { DateValidations } from "./validations.ts";
+import { DateValidations } from "./validations";
 import moment from "moment-timezone";
 import {
     TimeZonesEnum,
     type DateBusinessLogicInput,
     type IDateCalc,
-} from "../../types/dates.interfaces.ts";
-import { DateUtils } from "./calculator.ts";
+} from "../../types/dates.interfaces";
+import { DateUtils } from "./calculator";
 
 export class DateBusinessLogic {
     private currentDate: Moment;

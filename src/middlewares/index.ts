@@ -3,7 +3,7 @@ import { type Request, type Response, type NextFunction } from "express";
 import { z, ZodError } from "zod";
 
 import { StatusCodes, getReasonPhrase } from "http-status-codes";
-import { CustomError } from "../utils/exceptions.ts";
+import { CustomError } from "../utils/exceptions";
 
 /**
  * Zod middleware for query validations

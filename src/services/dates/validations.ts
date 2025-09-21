@@ -1,4 +1,4 @@
-import { DateUtils } from "./calculator.ts";
+import { DateUtils } from "./calculator";
 
 /**
  * Class for date validation logic

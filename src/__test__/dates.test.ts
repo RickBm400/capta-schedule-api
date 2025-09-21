@@ -1,8 +1,8 @@
-import { app } from "../configs/server.ts";
-import { DateBusinessLogic } from "../services/dates/index.ts";
+import { app } from "../configs/server";
+import { DateBusinessLogic } from "../services/dates/index";
 import request from "supertest";
-import { ErrorLogs } from "../utils/error-logs.ts";
-import { getHolidays } from "../external/holidays.api.ts";
+import { ErrorLogs } from "../utils/error-logs";
+import { getHolidays } from "../external/holidays.api";
 
 describe("date-business-logic", () => {
     it("Should return the correct result in utc", () => {

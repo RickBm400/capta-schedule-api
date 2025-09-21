@@ -42,8 +42,8 @@
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
     "skipLibCheck": true,
-    "allowImportingTsExtensions": true,
-    "emitDeclarationOnly":true,
+    "allowImportingTsExtensions": false,
+    "emitDeclarationOnly":false,
   },
   "exclude": ["node_modules"],
   "include": ["src/**/*.ts", "src/__test__/*.test.ts"]

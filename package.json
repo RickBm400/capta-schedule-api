@@ -10,7 +10,8 @@
         "dev": "tsx ./src/main.ts",
         "test": "jest --ci",
         "test:debug": "jest --watch",
-        "build": "tsc"
+        "build": "tsc",
+        "main": "node ./dist/main.js"
     },
     "author": "RickBm400",
     "license": "ISC",

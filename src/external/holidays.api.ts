@@ -1,5 +1,5 @@
 import axios, { type AxiosInstance } from "axios";
-import env from "../configs/environment.ts";
+import env from "../configs/environment";
 
 /**
  * Axios base instance for http requests

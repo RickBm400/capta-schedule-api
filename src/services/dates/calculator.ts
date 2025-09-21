@@ -2,7 +2,7 @@ import { type Moment } from "moment-timezone";
 import {
     DatesCalculationImpl,
     type WorkingHoursInSeconds,
-} from "../../types/dates.interfaces.ts";
+} from "../../types/dates.interfaces";
 
 export class DateUtils implements DatesCalculationImpl<Moment> {
     public readonly WEEKEND_DAYS: number[] = [6, 7] as const; // Saturday and sunday as days in week

@@ -2,12 +2,12 @@ import { type Request, type Response } from "express";
 import expressAsyncHandler from "express-async-handler";
 import { Router, type NextFunction } from "express";
 import { StatusCodes } from "http-status-codes";
-import { validateQuery } from "../middlewares/index.ts";
-import { DateParamsInputDto } from "../types/validations/date-params.dto.ts";
-import { calculateDateSkips } from "../services/dates.service.ts";
-import type { DateServiceInput } from "../types/dates.interfaces.ts";
-import { CustomError } from "../utils/exceptions.ts";
-import { ErrorLogs } from "../utils/error-logs.ts";
+import { validateQuery } from "../middlewares/index";
+import { DateParamsInputDto } from "../types/validations/date-params.dto";
+import { calculateDateSkips } from "../services/dates.service";
+import type { DateServiceInput } from "../types/dates.interfaces";
+import { CustomError } from "../utils/exceptions";
+import { ErrorLogs } from "../utils/error-logs";
 
 const asyncHandler = expressAsyncHandler;
 const router: Router = Router();

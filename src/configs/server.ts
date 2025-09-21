@@ -1,8 +1,8 @@
 import express, { type Express } from "express";
 import cors from "cors";
-import environment from "./environment.ts";
-import router from "../controllers/dates.controller.ts";
-import { ExceptionMiddleware } from "../middlewares/index.ts";
+import environment from "./environment";
+import router from "../controllers/dates.controller";
+import { ExceptionMiddleware } from "../middlewares/index";
 import morgan from "morgan";
 
 const app: Express = express();
