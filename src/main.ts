@@ -3,5 +3,4 @@ import environment from "./configs/environment";
 
 app.listen(environment.PORT, async () => {
     console.log("Process listening on port " + environment.PORT);
-    console.log(environment.API_VERSION);
 });
