@@ -14,7 +14,7 @@ const httpClient: AxiosInstance = axios.create({
 });
 
 /**
- * Get holiday dates from external capa api
+ * Get holiday dates from external capta api
  *
  * @export
  * @async
