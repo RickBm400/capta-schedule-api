@@ -52,7 +52,7 @@ export class DateUtils implements DatesCalculationImpl<Moment> {
      * @param {string} format
      * @returns {*}
      */
-    public format = (date: Moment, format: string): any => {
+    public format = (date: Moment, format: string = ""): any => {
         return date.format(format);
     };
 

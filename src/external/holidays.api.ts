@@ -1,5 +1,7 @@
 import axios, { type AxiosInstance } from "axios";
 import env from "../configs/environment";
+import { CustomError } from "../utils/exceptions";
+import { StatusCodes } from "http-status-codes";
 
 /**
  * Axios base instance for http requests
@@ -21,14 +23,12 @@ const httpClient: AxiosInstance = axios.create({
  * @returns {Promise<any>}
  */
 export async function getHolidays(): Promise<{ data: string[] }> {
-    try {
-        const _response = await httpClient.get(env.API_CAPTA_HOLYDATES);
-        if (!_response) throw new Error("Error: Invalid api call");
+    const _response: string[] = (await httpClient.get(env.API_CAPTA_HOLYDATES))
+        .data;
+    if (!_response)
+        throw new CustomError("", StatusCodes.INTERNAL_SERVER_ERROR);
 
-        return { data: _response.data };
-    } catch (error: any) {
-        return error;
-    }
+    return { data: [..._response] };
 }
 
 // TODO: implement caching and error handling

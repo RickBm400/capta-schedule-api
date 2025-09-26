@@ -4,6 +4,7 @@ import { z, ZodError } from "zod";
 
 import { StatusCodes, getReasonPhrase } from "http-status-codes";
 import { CustomError } from "../utils/exceptions";
+import { ErrorMessages } from "../utils/error-messages";
 
 /**
  * Zod middleware for query validations
@@ -24,7 +25,7 @@ export function validateQuery(schema: z.ZodObject<any, any>) {
                 }));
                 res.status(StatusCodes.BAD_REQUEST).json({
                     error: "Invalid data",
-                    details: errorMessages,
+                    details: errorMessages[0]?.message,
                 });
             } else {
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
@@ -51,7 +52,7 @@ export function ExceptionMiddleware(
     next: NextFunction
 ) {
     const statusCode = err instanceof CustomError ? err.statusCode : 500;
-    const message = err.message || "Something went wrong!";
+    const message = err.message || ErrorMessages.en.wrong_exception;
 
     res.status(statusCode).json({
         message,

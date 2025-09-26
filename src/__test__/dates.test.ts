@@ -1,7 +1,7 @@
 import { app } from "../configs/server";
 import { DateBusinessLogic } from "../services/dates/index";
 import request from "supertest";
-import { ErrorLogs } from "../utils/error-logs";
+import { ErrorMessages } from "../utils/error-messages";
 import { getHolidays } from "../external/holidays.api";
 
 describe("date-business-logic", () => {
@@ -37,7 +37,7 @@ describe("date-controller", () => {
             .get("/v1?date=2025-04-10T15:00:00.000Z")
             .then((response) => {
                 expect(JSON.parse(response.text).message).toBe(
-                    ErrorLogs.en.error_date_params
+                    ErrorMessages.en.error_date_params
                 );
             });
     });
@@ -47,7 +47,7 @@ describe("holidays-api", () => {
     test("Should return status ok on request", async () => {
         const response = await getHolidays();
 
-        expect(response.data).toBeInstanceOf(Array<String>);
-        expect(response.data).toHaveLength;
+        expect(response?.data).toBeInstanceOf(Array<String>);
+        expect(response?.data).toHaveLength;
     });
 });

@@ -56,4 +56,8 @@ export class DateValidations {
     }) {
         return holidays.includes(this.utils.format(date, "YYYY-MM-DD"));
     }
+
+    public isSameOrAfter(dateA: Moment, dateB: Moment) {
+        return dateA.isSameOrAfter(dateB);
+    }
 }

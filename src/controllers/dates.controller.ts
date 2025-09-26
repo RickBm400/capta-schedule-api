@@ -7,7 +7,7 @@ import { DateParamsInputDto } from "../types/validations/date-params.dto";
 import { calculateDateSkips } from "../services/dates.service";
 import type { DateServiceInput } from "../types/dates.interfaces";
 import { CustomError } from "../utils/exceptions";
-import { ErrorLogs } from "../utils/error-logs";
+import { ErrorMessages } from "../utils/error-messages";
 
 const asyncHandler = expressAsyncHandler;
 const router: Router = Router();
@@ -15,25 +15,20 @@ const router: Router = Router();
 router.get(
     "/",
     validateQuery(DateParamsInputDto),
-    asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-        try {
-            const query = DateParamsInputDto.safeParse(req.query)
-                .data as unknown as DateServiceInput;
+    asyncHandler(async (req: Request, res: Response) => {
+        const query = DateParamsInputDto.safeParse(req.query)
+            .data as unknown as DateServiceInput;
 
-            if (!query.hours && !query.days) {
-                throw new CustomError(
-                    ErrorLogs.en.error_date_params,
-                    StatusCodes.BAD_REQUEST
-                );
-            }
-
-            const calculated = await calculateDateSkips(query);
-            res.status(StatusCodes.OK).json({
-                date: calculated,
-            });
-        } catch (error) {
-            next(error);
+        if (!query.hours && !query.days) {
+            throw new CustomError(
+                ErrorMessages.en.error_date_params,
+                StatusCodes.BAD_REQUEST
+            );
         }
+
+        res.status(StatusCodes.OK).json({
+            date: await calculateDateSkips(query),
+        });
     })
 );
 

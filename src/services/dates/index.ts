@@ -7,6 +7,9 @@ import {
     type IDateCalc,
 } from "../../types/dates.interfaces";
 import { DateUtils } from "./utils";
+import { CustomError } from "../../utils/exceptions";
+import { ErrorMessages } from "../../utils/error-messages";
+import { StatusCodes } from "http-status-codes";
 
 export class DateBusinessLogic {
     private currentDate: Moment;
@@ -24,6 +27,7 @@ export class DateBusinessLogic {
     private utils: DateUtils = new DateUtils();
     private validations: DateValidations = new DateValidations();
     private readonly holidays: string[];
+    private readonly borderDate: Moment;
 
     constructor({
         date,
@@ -31,6 +35,7 @@ export class DateBusinessLogic {
         holidays,
     }: DateBusinessLogicInput) {
         this.currentDate = moment(date).tz(timeZone);
+        this.borderDate = moment(holidays[holidays.length - 1]).tz(timeZone);
         this.holidays = holidays;
         this.setCurrent();
         this.setFullTimeInSeconds();
@@ -220,9 +225,17 @@ export class DateBusinessLogic {
             this.setCurrent();
             this.setFullTimeInSeconds();
 
-            // !!days && console.log("Days: ", this.totalDaysToProcess);
-            // !!hours && console.log("Hours: ", this.totalHoursToProcess);
-            // console.log(this.currentDate.format());
+            if (
+                this.validations.isSameOrAfter(
+                    this.currentDate,
+                    this.borderDate
+                )
+            ) {
+                throw new CustomError(
+                    ErrorMessages.en.error_border_date,
+                    StatusCodes.BAD_REQUEST
+                );
+            }
 
             if (
                 this.validations.isHoliday({
