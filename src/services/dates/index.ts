@@ -67,22 +67,27 @@ export class DateBusinessLogic {
         const daysToSkips = this.firstLoop
             ? 5 - this.currentDayOfWeek
             : 8 - this.currentDayOfWeek; // if first loop is true, skip back, else skip forwar to next workind date
+        let setValueParams: {
+            hour: number;
+            minute: number;
+            second: number;
+        } | null = null;
 
         this.utils.addToDate(this.currentDate, daysToSkips, "days");
 
         if (this.firstLoop) {
-            this.utils.setToDate(this.currentDate, {
+            setValueParams = {
                 hour: 17,
                 minute: 0,
                 second: 0,
-            });
+            };
         } else {
             if (this.totalDaysToProcess <= 0) {
-                this.utils.setToDate(this.currentDate, {
+                setValueParams = {
                     hour: 8,
                     minute: 0,
                     second: 0,
-                });
+                };
             } else {
                 if (
                     !this.validations.isHoliday({
@@ -94,13 +99,9 @@ export class DateBusinessLogic {
                 }
             }
         }
-        // const hoursToSkip = this.firstLoop ? 17 : 8;
-        // this.utils.setToDate(this.currentDate, {
-        //     hour: hoursToSkip,
-        //     minute: 0,
-        //     second: 0,
-        // });
 
+        !!setValueParams &&
+            this.utils.setToDate(this.currentDate, setValueParams);
         this.firstLoop = false;
     }
 
@@ -219,9 +220,9 @@ export class DateBusinessLogic {
             this.setCurrent();
             this.setFullTimeInSeconds();
 
-            !!days && console.log("Days: ", this.totalDaysToProcess);
-            !!hours && console.log("Hours: ", this.totalHoursToProcess);
-            console.log(this.currentDate.format());
+            // !!days && console.log("Days: ", this.totalDaysToProcess);
+            // !!hours && console.log("Hours: ", this.totalHoursToProcess);
+            // console.log(this.currentDate.format());
 
             if (
                 this.validations.isHoliday({
@@ -265,6 +266,5 @@ export class DateBusinessLogic {
 
         // Convert result to UTC format
         return this.utils.getUTC(this.currentDate).format();
-        // return this.currentDate.format();
     }
 }
