@@ -1,3 +1,4 @@
+import { Moment } from "moment-timezone";
 import { DateUtils } from "./utils";
 
 /**
@@ -44,5 +45,15 @@ export class DateValidations {
             (fullTimeInSeconds > checkout && fullTimeInSeconds <= mdNight) ||
             (fullTimeInSeconds > mdNight && fullTimeInSeconds < checkin)
         );
+    }
+
+    public isHoliday({
+        date,
+        holidays = [],
+    }: {
+        date: Moment;
+        holidays: string[];
+    }) {
+        return holidays.includes(this.utils.format(date, "YYYY-MM-DD"));
     }
 }

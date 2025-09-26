@@ -70,12 +70,36 @@ export class DateBusinessLogic {
 
         this.utils.addToDate(this.currentDate, daysToSkips, "days");
 
-        const hoursToSkip = this.firstLoop ? 17 : 8;
-        this.utils.setToDate(this.currentDate, {
-            hour: hoursToSkip,
-            minute: 0,
-            second: 0,
-        });
+        if (this.firstLoop) {
+            this.utils.setToDate(this.currentDate, {
+                hour: 17,
+                minute: 0,
+                second: 0,
+            });
+        } else {
+            if (this.totalDaysToProcess <= 0) {
+                this.utils.setToDate(this.currentDate, {
+                    hour: 8,
+                    minute: 0,
+                    second: 0,
+                });
+            } else {
+                if (
+                    !this.validations.isHoliday({
+                        date: this.currentDate,
+                        holidays: this.holidays,
+                    })
+                ) {
+                    this.totalDaysToProcess--;
+                }
+            }
+        }
+        // const hoursToSkip = this.firstLoop ? 17 : 8;
+        // this.utils.setToDate(this.currentDate, {
+        //     hour: hoursToSkip,
+        //     minute: 0,
+        //     second: 0,
+        // });
 
         this.firstLoop = false;
     }
@@ -108,7 +132,39 @@ export class DateBusinessLogic {
         this.firstLoop = false;
     }
 
-    private processDay(holyDays: string[]): void {
+    private skipHoliday() {
+        const daysToJump = this.firstLoop ? -1 : 1;
+        this.utils.addToDate(this.currentDate, daysToJump, "days");
+
+        this.firstLoop &&
+            this.utils.setToDate(this.currentDate, {
+                hour: 17,
+                minute: 0,
+                second: 0,
+            });
+
+        if (
+            this.firstLoop &&
+            !this.validations.isHoliday({
+                date: this.currentDate,
+                holidays: this.holidays,
+            })
+        ) {
+            this.firstLoop = false;
+        } else if (
+            !this.firstLoop &&
+            this.totalDaysToProcess > 0 &&
+            !this.validations.isWeekendDay(this.currentDayOfWeek + 1) &&
+            !this.validations.isHoliday({
+                date: this.currentDate,
+                holidays: this.holidays,
+            })
+        ) {
+            this.totalDaysToProcess--;
+        }
+    }
+
+    private processDay(): void {
         let daysToAdd = 1;
 
         // checks if next day is a weekend day
@@ -121,7 +177,10 @@ export class DateBusinessLogic {
 
         // keeps days counter when not a holy day
         if (
-            !holyDays.includes(this.utils.format(this.currentDate, "YYYY-MM-D"))
+            !this.validations.isHoliday({
+                date: this.currentDate,
+                holidays: this.holidays,
+            })
         ) {
             this.totalDaysToProcess--;
         }
@@ -151,7 +210,6 @@ export class DateBusinessLogic {
     public calculate({ hours, days }: IDateCalc) {
         this.totalDaysToProcess = days || 0;
         this.totalHoursToProcess = hours || 0;
-        const holyDays = this.holidays;
 
         if (this.totalHoursToProcess <= 0 && this.totalDaysToProcess <= 0) {
             return this.currentDate.format();
@@ -161,7 +219,19 @@ export class DateBusinessLogic {
             this.setCurrent();
             this.setFullTimeInSeconds();
 
-            // console.log(this.currentDate.format());
+            !!days && console.log("Days: ", this.totalDaysToProcess);
+            !!hours && console.log("Hours: ", this.totalHoursToProcess);
+            console.log(this.currentDate.format());
+
+            if (
+                this.validations.isHoliday({
+                    date: this.currentDate,
+                    holidays: this.holidays,
+                })
+            ) {
+                this.skipHoliday();
+                continue;
+            }
 
             if (this.validations.isWeekendDay(this.currentDayOfWeek)) {
                 this.skipWeekend(); // Skips back and forward weekend days
@@ -182,7 +252,7 @@ export class DateBusinessLogic {
             }
 
             if (this.totalDaysToProcess > 0) {
-                this.processDay(holyDays);
+                this.processDay();
                 continue;
             }
 
@@ -195,5 +265,6 @@ export class DateBusinessLogic {
 
         // Convert result to UTC format
         return this.utils.getUTC(this.currentDate).format();
+        // return this.currentDate.format();
     }
 }
