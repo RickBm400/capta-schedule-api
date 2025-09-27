@@ -30,6 +30,12 @@ export interface DateServiceInput {
     timeZone?: string;
 }
 
+export type SetToDateParams = {
+    hour?: number;
+    minute?: number;
+    second?: number;
+};
+
 export interface DateBusinessLogicInput {
     date: string | undefined;
     timeZone?: string | TimeZonesEnum | undefined;

@@ -47,13 +47,7 @@ export class DateValidations {
         );
     }
 
-    public isHoliday({
-        date,
-        holidays = [],
-    }: {
-        date: Moment;
-        holidays: string[];
-    }) {
+    public isHoliday(date: Moment, holidays: string[] = []) {
         return holidays.includes(this.utils.format(date, "YYYY-MM-DD"));
     }
 

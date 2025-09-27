@@ -2,10 +2,11 @@ import type { Moment } from "moment-timezone";
 import { DateValidations } from "./validations";
 import moment from "moment-timezone";
 import {
+    SetToDateParams,
     TimeZonesEnum,
     type DateBusinessLogicInput,
     type IDateCalc,
-} from "../../types/dates.interfaces";
+} from "../../types/dates.types";
 import { DateUtils } from "./utils";
 import { CustomError } from "../../utils/exceptions";
 import { ErrorMessages } from "../../utils/error-messages";
@@ -72,37 +73,18 @@ export class DateBusinessLogic {
         const daysToSkips = this.firstLoop
             ? 5 - this.currentDayOfWeek
             : 8 - this.currentDayOfWeek; // if first loop is true, skip back, else skip forwar to next workind date
-        let setValueParams: {
-            hour: number;
-            minute: number;
-            second: number;
-        } | null = null;
+        let setValueParams: SetToDateParams | null = null;
 
         this.utils.addToDate(this.currentDate, daysToSkips, "days");
 
         if (this.firstLoop) {
-            setValueParams = {
-                hour: 17,
-                minute: 0,
-                second: 0,
-            };
-        } else {
-            if (this.totalDaysToProcess <= 0) {
-                setValueParams = {
-                    hour: 8,
-                    minute: 0,
-                    second: 0,
-                };
-            } else {
-                if (
-                    !this.validations.isHoliday({
-                        date: this.currentDate,
-                        holidays: this.holidays,
-                    })
-                ) {
-                    this.totalDaysToProcess--;
-                }
-            }
+            setValueParams = { hour: 17, minute: 0, second: 0 };
+        } else if (this.totalDaysToProcess <= 0) {
+            setValueParams = { hour: 8, minute: 0, second: 0 };
+        } else if (
+            !this.validations.isHoliday(this.currentDate, this.holidays)
+        ) {
+            this.totalDaysToProcess--;
         }
 
         !!setValueParams &&
@@ -151,20 +133,14 @@ export class DateBusinessLogic {
 
         if (
             this.firstLoop &&
-            !this.validations.isHoliday({
-                date: this.currentDate,
-                holidays: this.holidays,
-            })
+            !this.validations.isHoliday(this.currentDate, this.holidays)
         ) {
             this.firstLoop = false;
         } else if (
-            !this.firstLoop &&
             this.totalDaysToProcess > 0 &&
+            !this.firstLoop &&
             !this.validations.isWeekendDay(this.currentDayOfWeek + 1) &&
-            !this.validations.isHoliday({
-                date: this.currentDate,
-                holidays: this.holidays,
-            })
+            !this.validations.isHoliday(this.currentDate, this.holidays)
         ) {
             this.totalDaysToProcess--;
         }
@@ -182,12 +158,7 @@ export class DateBusinessLogic {
         this.utils.addToDate(this.currentDate, daysToAdd, "days");
 
         // keeps days counter when not a holy day
-        if (
-            !this.validations.isHoliday({
-                date: this.currentDate,
-                holidays: this.holidays,
-            })
-        ) {
+        if (!this.validations.isHoliday(this.currentDate, this.holidays)) {
             this.totalDaysToProcess--;
         }
 
@@ -210,7 +181,7 @@ export class DateBusinessLogic {
 
     /**
      * Calculates the date based on the input parameters
-     * @param param0
+     * @param { hours, days }
      * @returns
      */
     public calculate({ hours, days }: IDateCalc) {
@@ -218,7 +189,7 @@ export class DateBusinessLogic {
         this.totalHoursToProcess = hours || 0;
 
         if (this.totalHoursToProcess <= 0 && this.totalDaysToProcess <= 0) {
-            return this.currentDate.format();
+            return this.utils.format(this.utils.getUTC(this.currentDate));
         }
 
         while (this.totalHoursToProcess > 0 || this.totalDaysToProcess > 0) {
@@ -237,12 +208,7 @@ export class DateBusinessLogic {
                 );
             }
 
-            if (
-                this.validations.isHoliday({
-                    date: this.currentDate,
-                    holidays: this.holidays,
-                })
-            ) {
+            if (this.validations.isHoliday(this.currentDate, this.holidays)) {
                 this.skipHoliday();
                 continue;
             }
@@ -278,6 +244,6 @@ export class DateBusinessLogic {
         }
 
         // Convert result to UTC format
-        return this.utils.getUTC(this.currentDate).format();
+        return this.utils.format(this.utils.getUTC(this.currentDate));
     }
 }

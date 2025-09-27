@@ -1,8 +1,9 @@
 import { type Moment } from "moment-timezone";
 import {
     DatesCalculationImpl,
+    SetToDateParams,
     type WorkingHoursInSeconds,
-} from "../../types/dates.interfaces";
+} from "../../types/dates.types";
 
 export class DateUtils implements DatesCalculationImpl<Moment> {
     public readonly WEEKEND_DAYS: number[] = [6, 7] as const; // Saturday and sunday as days in week
@@ -26,10 +27,8 @@ export class DateUtils implements DatesCalculationImpl<Moment> {
      * @param {{ hour?: number; minute?: number; second?: number }} params
      * @returns {Moment}
      */
-    public setToDate = (
-        date: Moment,
-        params: { hour?: number; minute?: number; second?: number }
-    ): Moment => date.set(params);
+    public setToDate = (date: Moment, params: SetToDateParams): Moment =>
+        date.set(params);
 
     /**
      * Adds hours, days or minutes to a Moment date object

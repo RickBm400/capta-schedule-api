@@ -1,5 +1,5 @@
 import { getHolidays } from "../external/holidays.api";
-import type { DateServiceInput } from "../types/dates.interfaces";
+import type { DateServiceInput } from "../types/dates.types";
 import { DateBusinessLogic } from "./dates/index";
 
 export const calculateDateSkips = async ({

@@ -5,7 +5,7 @@ import { StatusCodes } from "http-status-codes";
 import { validateQuery } from "../middlewares/index";
 import { DateParamsInputDto } from "../types/validations/date-params.dto";
 import { calculateDateSkips } from "../services/dates.service";
-import type { DateServiceInput } from "../types/dates.interfaces";
+import type { DateServiceInput } from "../types/dates.types";
 import { CustomError } from "../utils/exceptions";
 import { ErrorMessages } from "../utils/error-messages";
 
