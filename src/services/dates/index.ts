@@ -212,7 +212,7 @@ export class DateBusinessLogic {
                 )
             ) {
                 throw new CustomError(
-                    ErrorMessages.en.error_border_date,
+                    ErrorMessages.en.error_limit_date,
                     StatusCodes.BAD_REQUEST
                 );
             }

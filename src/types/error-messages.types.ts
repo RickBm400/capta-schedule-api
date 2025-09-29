@@ -4,7 +4,7 @@ export type MappedMessage = {
 
 export enum ErrorMessageKey {
     error_date_params = "error_date_params",
-    error_border_date = "error_border_date",
+    error_limit_date = "error_limit_date",
     wrong_exception = "wrong_exception",
 }
 
