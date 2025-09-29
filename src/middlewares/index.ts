@@ -24,12 +24,12 @@ export function validateQuery(schema: z.ZodObject<any, any>) {
                     message: `${issue.path.join(".")} is ${issue.message}`,
                 }));
                 res.status(StatusCodes.BAD_REQUEST).json({
-                    error: "Invalid data",
+                    error: getReasonPhrase(StatusCodes.BAD_REQUEST),
                     details: errorMessages[0]?.message,
                 });
             } else {
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                    error: "Internal Server Error",
+                    error: getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR),
                 });
             }
         }
