@@ -1,3 +1,5 @@
+export const finalDate: string = "2036-01-01"; // Limit date based on Holidays API
+
 export interface SetToDateParams {
     hour?: number;
     minute?: number;

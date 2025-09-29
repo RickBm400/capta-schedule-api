@@ -2,6 +2,7 @@ import type { Moment } from "moment-timezone";
 import { DateValidations } from "./validations";
 import moment from "moment-timezone";
 import {
+    finalDate,
     SetToDateParams,
     TimeZonesEnum,
     type DateBusinessLogicInput,
@@ -28,7 +29,7 @@ export class DateBusinessLogic {
     private utils: DateUtils = new DateUtils();
     private validations: DateValidations = new DateValidations();
     private readonly holidays: string[];
-    private readonly borderDate: Moment = moment("2036-01-01");
+    private readonly borderDate: Moment = moment(finalDate);
 
     constructor({
         date,

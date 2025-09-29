@@ -1,8 +1,9 @@
 import { DateBusinessLogic } from "../services/dates";
+import { ISpecialDateTest } from "../types/test.types";
 import { holyDayArray } from "../utils/holidays.utils";
 
 describe("date-special-cases", () => {
-    const specialDateTest = [
+    const specialDateTest: ISpecialDateTest[] = [
         {
             calcInput: { hours: 8 },
             date: "2025-12-31T15:00:00.000Z",
