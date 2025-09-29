@@ -36,7 +36,7 @@ export class DateBusinessLogic {
         holidays,
     }: DateBusinessLogicInput) {
         this.currentDate = moment(date).tz(timeZone);
-        this.borderDate = moment(holidays[holidays.length - 1]).tz(timeZone);
+        this.borderDate = moment(holidays[holidays.length - 1]).tz(timeZone); // TODO: Organize date holidays first
         this.holidays = holidays;
         this.setCurrent();
         this.setFullTimeInSeconds();

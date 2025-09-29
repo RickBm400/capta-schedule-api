@@ -1,4 +1,4 @@
-export interface setToDateParams {
+export interface SetToDateParams {
     hour?: number;
     minute?: number;
     second?: number;
@@ -30,12 +30,6 @@ export interface DateServiceInput {
     timeZone?: string;
 }
 
-export type SetToDateParams = {
-    hour?: number;
-    minute?: number;
-    second?: number;
-};
-
 export interface DateBusinessLogicInput {
     date: string | undefined;
     timeZone?: string | TimeZonesEnum | undefined;
@@ -51,9 +45,10 @@ export abstract class DatesCalculationImpl<T> {
     public readonly WEEKEND_DAYS: number[] = [6, 7];
 
     abstract timeToSeconds(time: string): number;
-    abstract setToDate(date: T, params: setToDateParams): T;
+    abstract setToDate(date: T, params: SetToDateParams): T;
     abstract addToDate(date: T, amount: number, unit: dateUnits): T;
     abstract format(date: T, format: string): string;
+    abstract getUTC(date: T): T;
 
     abstract BUSINESS_HOURS: WorkingHoursInSeconds;
 }
