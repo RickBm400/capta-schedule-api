@@ -40,11 +40,20 @@ export class DateValidations {
      * @returns {Boolean}
      */
     public isLeavingHour(fullTimeInSeconds: number): Boolean {
-        const { checkin, checkout, mdNight } = this.utils.BUSINESS_HOURS;
         return (
-            (fullTimeInSeconds > checkout && fullTimeInSeconds <= mdNight) ||
-            (fullTimeInSeconds > mdNight && fullTimeInSeconds < checkin)
+            this.isAfterLeaveBeforeMidnight(fullTimeInSeconds) ||
+            this.isAfterMidnightBeforeWork(fullTimeInSeconds)
         );
+    }
+
+    public isAfterLeaveBeforeMidnight(fullTimeInSeconds: number) {
+        const { checkout, bfMidNight } = this.utils.BUSINESS_HOURS;
+        return fullTimeInSeconds > checkout && fullTimeInSeconds <= bfMidNight;
+    }
+
+    public isAfterMidnightBeforeWork(fullTimeInSeconds: number) {
+        const { afMidNight, checkin } = this.utils.BUSINESS_HOURS;
+        return fullTimeInSeconds >= afMidNight && fullTimeInSeconds < checkin;
     }
 
     public isHoliday(date: Moment, holidays: string[] = []) {

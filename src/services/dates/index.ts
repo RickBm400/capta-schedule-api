@@ -98,7 +98,11 @@ export class DateBusinessLogic {
     }
 
     private skipToNextDay(): void {
-        const { setToDate, addToDate, BUSINESS_HOURS } = this.utils;
+        const {
+            setToDate,
+            addToDate,
+            BUSINESS_HOURS: { checkout },
+        } = this.utils;
 
         // Reset hour to 17 if it's the checkout hour and it's the first loop
         const resetHour =
@@ -107,14 +111,19 @@ export class DateBusinessLogic {
                 ? 17
                 : 8;
 
+        // Skip to previous day if current hour is after midnight and before work check in
+        if (
+            this.validations.isAfterMidnightBeforeWork(this.fullTimeInSeconds)
+        ) {
+            addToDate(this.currentDate, -1, "days");
+        }
+
         setToDate(this.currentDate, { hour: resetHour });
+
         if (this.firstLoop) {
             setToDate(this.currentDate, { minute: 0, second: 0 });
         }
-        if (
-            this.fullTimeInSeconds == BUSINESS_HOURS.checkout &&
-            this.firstLoop
-        ) {
+        if (this.fullTimeInSeconds == checkout && this.firstLoop) {
             addToDate(this.currentDate, 1, "days");
         }
         this.firstLoop = false;

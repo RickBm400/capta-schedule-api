@@ -20,7 +20,8 @@ export interface WorkingHoursInSeconds {
     endLunch: number;
     checkout: number;
     checkin: number;
-    mdNight: number;
+    bfMidNight: number;
+    afMidNight: number;
 }
 
 export interface DateServiceInput {

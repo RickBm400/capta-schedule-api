@@ -39,6 +39,12 @@ describe("date-special-cases", () => {
             holidays: holyDayArray,
             expected: "2026-06-30T21:00:00Z",
         },
+        {
+            calcInput: { days: 1 },
+            date: "2025-09-25T09:00:00.000Z", // after midnight usecase
+            holidays: holyDayArray,
+            expected: "2025-09-25T22:00:00Z",
+        },
     ];
 
     for (const { expected, calcInput, date, holidays } of specialDateTest) {

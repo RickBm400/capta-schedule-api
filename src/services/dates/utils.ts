@@ -74,6 +74,7 @@ export class DateUtils implements DatesCalculationImpl<Moment> {
         endLunch: this.timeToSeconds("13:00:00"),
         checkout: this.timeToSeconds("17:00:00"),
         checkin: this.timeToSeconds("08:00:00"),
-        mdNight: this.timeToSeconds("23:59:59"),
+        bfMidNight: this.timeToSeconds("23:59:59"),
+        afMidNight: this.timeToSeconds("00:00:00"),
     } as const;
 }
