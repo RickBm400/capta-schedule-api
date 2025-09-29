@@ -10,7 +10,7 @@ export const ErrorMessages: MappedMessage = {
     en: {
         error_date_params:
             "You must provide at least one of the parameters 'hours' or 'days'.",
-        error_limit_date: "Limit date time exceeded (2035-12-31)",
+        error_limit_date: "Limit date time exceeded (2036-01-01)",
         wrong_exception: "Something went wrong!",
     },
 };

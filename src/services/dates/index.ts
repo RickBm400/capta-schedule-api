@@ -28,7 +28,7 @@ export class DateBusinessLogic {
     private utils: DateUtils = new DateUtils();
     private validations: DateValidations = new DateValidations();
     private readonly holidays: string[];
-    private readonly borderDate: Moment;
+    private readonly borderDate: Moment = moment("2036-01-01");
 
     constructor({
         date,
@@ -36,7 +36,7 @@ export class DateBusinessLogic {
         holidays,
     }: DateBusinessLogicInput) {
         this.currentDate = moment(date).tz(timeZone);
-        this.borderDate = moment(holidays[holidays.length - 1]).tz(timeZone); // TODO: Organize date holidays first
+        this.borderDate = this.borderDate.tz(timeZone);
         this.holidays = holidays;
         this.setCurrent();
         this.setFullTimeInSeconds();
