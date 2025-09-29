@@ -30,5 +30,3 @@ export async function getHolidays(): Promise<{ data: string[] }> {
 
     return { data: [..._response] };
 }
-
-// TODO: implement caching and error handling
